@@ -2,42 +2,56 @@
 
 import { motion, Variants } from "framer-motion";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
-// Animation variants
+// Check for reduced motion preference
+function useReducedMotion() {
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setPrefersReducedMotion(mediaQuery.matches);
+
+    const handler = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches);
+    mediaQuery.addEventListener('change', handler);
+    return () => mediaQuery.removeEventListener('change', handler);
+  }, []);
+
+  return prefersReducedMotion;
+}
+
+// Animation variants - optimized for mobile
 const container: Variants = {
   hidden: { opacity: 0 },
   show: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.15,
-      delayChildren: 0.3,
+      staggerChildren: 0.08,  // Faster cascade (was 0.15)
+      delayChildren: 0.1,     // Quicker start (was 0.3)
     },
   },
 };
 
 const item: Variants = {
-  hidden: { opacity: 0, y: 30 },
+  hidden: { opacity: 0, y: 20 },  // Reduced movement (was y: 30)
   show: {
     opacity: 1,
     y: 0,
     transition: {
       type: "spring",
-      damping: 20,
-      stiffness: 100,
+      damping: 25,      // Slightly stiffer (was 20)
+      stiffness: 120,   // Snappier (was 100)
     },
   },
 };
 
+// Simplified glow effect - uses opacity instead of expensive textShadow
 const fireGlow = {
-  initial: { textShadow: "0 0 20px rgba(255, 69, 0, 0)" },
+  initial: { opacity: 0.85 },
   animate: {
-    textShadow: [
-      "0 0 20px rgba(255, 69, 0, 0.3)",
-      "0 0 40px rgba(255, 69, 0, 0.6)",
-      "0 0 20px rgba(255, 69, 0, 0.3)",
-    ],
+    opacity: [0.85, 1, 0.85],
     transition: {
-      duration: 2,
+      duration: 2.5,     // Slightly slower for smoother feel
       repeat: Infinity,
       ease: "easeInOut" as const,
     },
@@ -131,7 +145,11 @@ export default function Home() {
             <p className="font-code text-xs text-[var(--poder-paper)] opacity-60 uppercase tracking-wider">Languages</p>
           </div>
           <div className="text-center">
-            <p className="font-display text-4xl text-[var(--poder-fire)]">∞</p>
+            <p className="font-display text-4xl text-[var(--poder-fire)]">
+              {/* Emoji on mobile for compatibility, text on desktop */}
+              <span className="sm:hidden">♾️</span>
+              <span className="hidden sm:inline">∞</span>
+            </p>
             <p className="font-code text-xs text-[var(--poder-paper)] opacity-60 uppercase tracking-wider">Power to You</p>
           </div>
         </motion.div>

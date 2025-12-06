@@ -30,7 +30,10 @@ export function RightsCardUI({ card, onSwipeLeft, onSwipeRight, isTop }: RightsC
         <AnimatePresence>
             <motion.div
                 className="absolute w-full"
-                style={{ zIndex: isTop ? 10 : 0 }}
+                style={{
+                    zIndex: isTop ? 10 : 0,
+                    willChange: isTop ? 'transform' : 'auto',  // GPU hint for active card
+                }}
                 initial={{ scale: isTop ? 1 : 0.95, opacity: isTop ? 1 : 0.5 }}
                 animate={{
                     scale: isTop ? 1 : 0.95,
@@ -40,14 +43,14 @@ export function RightsCardUI({ card, onSwipeLeft, onSwipeRight, isTop }: RightsC
                 exit={{
                     x: exitX,
                     opacity: 0,
-                    rotate: exitX > 0 ? 15 : -15,
-                    transition: { duration: 0.3 }
+                    rotate: exitX > 0 ? 10 : -10,  // Reduced rotation (was 15)
+                    transition: { duration: 0.2 }  // Faster exit (was 0.3)
                 }}
                 drag={isTop ? "x" : false}
                 dragConstraints={{ left: 0, right: 0 }}
-                dragElastic={0.9}
+                dragElastic={0.5}  // Reduced elasticity (was 0.9)
                 onDragEnd={handleDragEnd}
-                whileDrag={{ cursor: "grabbing", scale: 1.02 }}
+                whileDrag={{ cursor: "grabbing", scale: 1.01 }}  // Subtler scale (was 1.02)
             >
                 <div
                     className="card-resistance cursor-grab active:cursor-grabbing"
@@ -145,8 +148,8 @@ export function CategoryFilter({ categories, selected, onSelect }: CategoryFilte
             <button
                 onClick={() => onSelect(null)}
                 className={`shrink-0 px-4 py-2 rounded-full font-code text-sm transition-all ${selected === null
-                        ? "bg-[var(--poder-fire)] text-[var(--poder-cream)]"
-                        : "bg-[var(--poder-charcoal)] text-[var(--poder-paper)] opacity-70 hover:opacity-100"
+                    ? "bg-[var(--poder-fire)] text-[var(--poder-cream)]"
+                    : "bg-[var(--poder-charcoal)] text-[var(--poder-paper)] opacity-70 hover:opacity-100"
                     }`}
             >
                 All
@@ -156,8 +159,8 @@ export function CategoryFilter({ categories, selected, onSelect }: CategoryFilte
                     key={cat.key}
                     onClick={() => onSelect(cat.key)}
                     className={`shrink-0 px-4 py-2 rounded-full font-code text-sm transition-all ${selected === cat.key
-                            ? "text-[var(--poder-cream)]"
-                            : "bg-[var(--poder-charcoal)] text-[var(--poder-paper)] opacity-70 hover:opacity-100"
+                        ? "text-[var(--poder-cream)]"
+                        : "bg-[var(--poder-charcoal)] text-[var(--poder-paper)] opacity-70 hover:opacity-100"
                         }`}
                     style={{
                         background: selected === cat.key ? cat.color : undefined,

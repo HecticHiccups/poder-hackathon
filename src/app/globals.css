@@ -20,24 +20,24 @@
   --poder-paper: #F5F3E7;
   --poder-cream: #FFFEF9;
   --poder-red-alert: #DC2626;
-  
+
   /* Semantic Tokens */
   --background: var(--poder-midnight);
   --foreground: var(--poder-paper);
   --accent-primary: var(--poder-fire);
   --accent-secondary: var(--poder-neon);
   --accent-reward: var(--poder-gold);
-  
+
   /* Typography Scale */
   --font-display: 'Bebas Neue', Impact, sans-serif;
   --font-body: 'Bitter', Georgia, serif;
   --font-code: 'JetBrains Mono', 'Fira Code', monospace;
-  
+
   /* Spacing & Radius */
   --radius-sharp: 2px;
   --radius-soft: 8px;
   --radius-pill: 999px;
-  
+
   /* Shadows with Fire Glow */
   --shadow-fire: 0 4px 20px rgba(255, 69, 0, 0.3);
   --shadow-neon: 0 4px 20px rgba(0, 217, 255, 0.3);
@@ -90,7 +90,12 @@ body::before {
 }
 
 /* ---- TYPOGRAPHY ---- */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--font-display);
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -137,7 +142,7 @@ h1, h2, h3, h4, h5, h6 {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.2) 50%, transparent 100%);
+  background: linear-gradient(135deg, transparent 0%, rgba(255, 255, 255, 0.2) 50%, transparent 100%);
   transform: translateX(-100%);
   transition: transform 0.5s ease;
 }
@@ -260,8 +265,9 @@ h1, h2, h3, h4, h5, h6 {
   body {
     font-size: 16px;
   }
-  
-  .btn-fire, .btn-neon {
+
+  .btn-fire,
+  .btn-neon {
     width: 100%;
     padding: 1rem 1.5rem;
     font-size: 1rem;
@@ -301,19 +307,25 @@ h1, h2, h3, h4, h5, h6 {
 
 /* ---- UTILITY ANIMATIONS ---- */
 @keyframes pulse-fire {
-  0%, 100% {
+
+  0%,
+  100% {
     box-shadow: 0 0 0 0 rgba(255, 69, 0, 0.4);
   }
+
   50% {
-    box-shadow: 0 0 0 12px rgba(255, 69, 0, 0);
+    box-shadow: 0 0 0 8px rgba(255, 69, 0, 0);
+    /* Reduced from 12px */
   }
 }
 
 @keyframes slide-up {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(12px);
+    /* Reduced from 20px for faster visual paint */
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -321,31 +333,114 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 @keyframes fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 .animate-pulse-fire {
-  animation: pulse-fire 2s infinite;
+  animation: pulse-fire 2.5s infinite;
+  /* Slower to reduce repaints */
 }
 
 .animate-slide-up {
-  animation: slide-up 0.5s ease-out forwards;
+  animation: slide-up 0.4s ease-out forwards;
+  /* Faster: 0.4s from 0.5s */
 }
 
 .animate-fade-in {
-  animation: fade-in 0.3s ease-out forwards;
+  animation: fade-in 0.25s ease-out forwards;
+  /* Faster: 0.25s from 0.3s */
 }
 
-/* Stagger children */
-.stagger-children > * {
+/* Stagger children - faster timing */
+.stagger-children>* {
   opacity: 0;
-  animation: slide-up 0.5s ease-out forwards;
+  animation: slide-up 0.4s ease-out forwards;
 }
 
-.stagger-children > *:nth-child(1) { animation-delay: 0.1s; }
-.stagger-children > *:nth-child(2) { animation-delay: 0.2s; }
-.stagger-children > *:nth-child(3) { animation-delay: 0.3s; }
-.stagger-children > *:nth-child(4) { animation-delay: 0.4s; }
-.stagger-children > *:nth-child(5) { animation-delay: 0.5s; }
-.stagger-children > *:nth-child(6) { animation-delay: 0.6s; }
+.stagger-children>*:nth-child(1) {
+  animation-delay: 0.05s;
+}
+
+.stagger-children>*:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.stagger-children>*:nth-child(3) {
+  animation-delay: 0.15s;
+}
+
+.stagger-children>*:nth-child(4) {
+  animation-delay: 0.2s;
+}
+
+.stagger-children>*:nth-child(5) {
+  animation-delay: 0.25s;
+}
+
+.stagger-children>*:nth-child(6) {
+  animation-delay: 0.3s;
+}
+
+/* ---- REDUCED MOTION SUPPORT ---- */
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .animate-pulse-fire {
+    animation: none;
+  }
+
+  .stagger-children>* {
+    opacity: 1;
+    animation: none;
+  }
+}
+
+/* ---- GPU ACCELERATION HINTS ---- */
+.card-resistance,
+.btn-fire,
+.btn-neon {
+  will-change: transform;
+  transform: translateZ(0);
+  /* Force GPU layer */
+}
+
+/* ---- MOBILE PERFORMANCE ---- */
+@media (max-width: 768px) {
+
+  /* Reduce animation distances on mobile */
+  @keyframes slide-up {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+      /* Even smaller on mobile */
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Disable hover effects that cause repaints */
+  .card-resistance:hover {
+    transform: none;
+  }
+
+  .btn-fire:hover {
+    transform: none;
+  }
+}
