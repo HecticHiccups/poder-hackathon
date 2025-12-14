@@ -140,7 +140,22 @@ export function searchQuestions(
     limit: number = 5
 ): PoderAnswer[] {
     const kb = language === 'en' ? enFAQ : esFAQ;
-    const normalized = searchTerm.toLowerCase();
+    const normalized = searchTerm.toLowerCase().trim();
+
+    // If no search term, return first N questions
+    if (!normalized) {
+        return kb.questions.slice(0, limit).map(q => ({
+            id: q.id,
+            question: q.question,
+            answer: q.answer,
+            voiceScript: q.voiceScript,
+            audioUrl: `/audio/${language}/${q.audioFile}`,
+            relatedScenarios: q.relatedScenarios,
+            relatedCards: q.relatedCards,
+            category: q.category,
+            confidence: 1,
+        }));
+    }
 
     // Score and sort all questions
     const scored = kb.questions
