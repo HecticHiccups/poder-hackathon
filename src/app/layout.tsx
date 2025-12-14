@@ -61,6 +61,8 @@ export const metadata: Metadata = {
   },
 };
 
+import { PoderAgent } from "@/components/poder-agent";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -72,6 +74,7 @@ export default function RootLayout({
         className={`${bebasNeue.variable} ${bitter.variable} ${jetbrainsMono.variable} antialiased`}
       >
         {children}
+        <PoderAgent />
       </body>
     </html>
   );

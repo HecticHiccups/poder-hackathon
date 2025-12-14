@@ -1,0 +1,204 @@
+{
+    "category": "preguntas-inmigracion",
+    "language": "es",
+    "version": "1.0",
+    "lastUpdated": "2024-12-13",
+    "questions": [
+        {
+            "id": "ice-puerta-001",
+            "question": "¿Qué debo hacer si ICE llega a mi puerta?",
+            "keywords": [
+                "ice",
+                "puerta",
+                "tocar",
+                "casa",
+                "orden",
+                "inmigración",
+                "migra"
+            ],
+            "answer": "No abra la puerta. Tiene derecho a permanecer en silencio. A través de la puerta cerrada, pídales que deslicen cualquier orden debajo de la puerta. Solo una orden judicial firmada por un juez les da el derecho de entrar. Una orden administrativa (Formulario I-200 o I-205) NO les da permiso para entrar a su hogar.",
+            "voiceScript": "Bueno, primera cosa—NO abras esa puerta. Tienes derechos aquí. Pídeles por la puerta que deslicen la orden por debajo. Ahora, aquí está la parte clave: revisa si está firmada por un JUEZ. Si solo dice 'Departamento de Seguridad Nacional' o muestra el Formulario I-200, esa es una orden administrativa, y no pueden entrar. Mantén la calma, no respondas preguntas, y llama a un abogado tan pronto como puedas.",
+            "audioFile": "ice_puerta_001.mp3",
+            "relatedScenarios": [
+                "ice-knock-001"
+            ],
+            "relatedCards": [],
+            "category": "encuentros-ice"
+        },
+        {
+            "id": "ice-orden-001",
+            "question": "¿Cuál es la diferencia entre una orden administrativa y una orden judicial?",
+            "keywords": [
+                "orden",
+                "administrativa",
+                "judicial",
+                "juez",
+                "ice",
+                "diferencia"
+            ],
+            "answer": "Una orden judicial está firmada por un juez y le da a ICE la autoridad legal para entrar a su hogar. Una orden administrativa (Formulario I-200 o I-205) solo está firmada por un oficial de ICE y NO les otorga entrada. Siempre revise la firma de un juez antes de abrir la puerta.",
+            "voiceScript": "Mira, hay dos tipos de órdenes, y esto es súper importante. Una orden judicial—esa está firmada por un JUEZ—eso significa que pueden entrar legalmente. Pero la mayoría de las veces, ICE llega con una orden administrativa. Eso es solo el Formulario I-200, firmado por un oficial de ICE, no un juez. Con una orden administrativa, NO tienes que dejarlos entrar. Busca la firma del juez. ¿No hay juez? No abras la puerta.",
+            "audioFile": "ice_orden_001.mp3",
+            "relatedScenarios": [
+                "ice-knock-001"
+            ],
+            "relatedCards": [],
+            "category": "encuentros-ice"
+        },
+        {
+            "id": "ice-trabajo-001",
+            "question": "¿Cuáles son mis derechos si ICE viene a mi lugar de trabajo?",
+            "keywords": [
+                "ice",
+                "trabajo",
+                "empleo",
+                "jefe",
+                "redada",
+                "migra"
+            ],
+            "answer": "Tiene derecho a permanecer en silencio. No corra, ya que puede darles sospecha razonable a los oficiales. Diga con calma: 'Estoy ejerciendo mi derecho a permanecer en silencio y no deseo responder preguntas.' No muestre documentos falsos ni mienta. Puede preguntar si es libre de irse. Contacte a un abogado de inmigración inmediatamente.",
+            "voiceScript": "Está bien, si ICE llega a tu trabajo, mantén la calma. No corras—eso puede empeorar las cosas. Tienes derecho a quedarte callado, así que úsalo. Di claramente: 'Estoy ejerciendo mi derecho a permanecer en silencio.' No muestres documentos falsos, no mientas. Solo pregunta: '¿Soy libre de irme?' Si dicen que sí, aléjate con calma. Si no, quédate callado y llama a un abogado lo antes posible.",
+            "audioFile": "ice_trabajo_001.mp3",
+            "relatedScenarios": [],
+            "relatedCards": [],
+            "category": "encuentros-ice"
+        },
+        {
+            "id": "policia-preguntas-001",
+            "question": "¿Tengo que responder preguntas de la policía?",
+            "keywords": [
+                "policía",
+                "preguntas",
+                "responder",
+                "quinta enmienda",
+                "silencio",
+                "derechos"
+            ],
+            "answer": "No. La Quinta Enmienda protege su derecho a permanecer en silencio. Puede decir educadamente: 'Estoy ejerciendo mi derecho a permanecer en silencio.' Debe proporcionar identificación si se le solicita durante una parada legal, pero no tiene que responder otras preguntas.",
+            "voiceScript": "¿Respuesta corta? No. La Quinta Enmienda te protege aquí. Puedes quedarte callado. Solo di: 'Estoy ejerciendo mi derecho a permanecer en silencio,' y ya. Ahora, SÍ tienes que mostrar identificación si te la piden durante una parada de tráfico o una parada legal, pero eso es todo. ¿Algo más? No tienes que decir ni una palabra.",
+            "audioFile": "policia_preguntas_001.mp3",
+            "relatedScenarios": [
+                "traffic-stop-001"
+            ],
+            "relatedCards": [],
+            "category": "interacciones-policiales"
+        },
+        {
+            "id": "policia-grabar-001",
+            "question": "¿Puedo grabar a la policía durante una parada de tráfico?",
+            "keywords": [
+                "grabar",
+                "filmar",
+                "video",
+                "policía",
+                "parada",
+                "teléfono",
+                "cámara"
+            ],
+            "answer": "Sí. Tiene el derecho constitucional de grabar a oficiales de policía realizando sus funciones en público. Infórmeles con calma que está grabando. Mantenga sus manos visibles y no interfiera con su trabajo. La grabación puede ser evidencia crucial si sus derechos son violados.",
+            "voiceScript": "Sí, absolutamente puedes. Es tu derecho constitucional grabar a la policía en público. Solo hazles saber con calma—'Estoy grabando por mi seguridad'—y mantén tus manos donde puedan verlas. No te metas en su camino, pero mantén esa cámara grabando. Si algo sale mal, esa grabación podría salvarte.",
+            "audioFile": "policia_grabar_001.mp3",
+            "relatedScenarios": [
+                "traffic-stop-001"
+            ],
+            "relatedCards": [],
+            "category": "interacciones-policiales"
+        },
+        {
+            "id": "policia-registro-001",
+            "question": "¿Qué debo decir si un oficial pide registrar mi carro?",
+            "keywords": [
+                "registro",
+                "carro",
+                "vehículo",
+                "consentimiento",
+                "cuarta enmienda",
+                "derechos"
+            ],
+            "answer": "Diga claramente: 'No consiento a un registro.' La Cuarta Enmienda lo protege de registros irrazonables. El oficial aún puede registrar si alega causa probable, pero su negativa verbal lo protege legalmente. Nunca resista físicamente.",
+            "voiceScript": "Di esto claramente: 'No consiento a un registro.' Punto. La Cuarta Enmienda te protege de registros sin una buena razón. Ahora, pueden registrar de todas formas si alegan causa probable, pero lo que importa es que DIJISTE que no consientes. Eso queda en el récord. Pero nunca resistas físicamente—eso solo empeorará las cosas. Mantén la calma, declara tu negativa, y deja que suceda.",
+            "audioFile": "policia_registro_001.mp3",
+            "relatedScenarios": [
+                "traffic-stop-001"
+            ],
+            "relatedCards": [],
+            "category": "interacciones-policiales"
+        },
+        {
+            "id": "vivienda-desalojo-001",
+            "question": "¿Puede mi casero cambiar las cerraduras sin una orden judicial?",
+            "keywords": [
+                "casero",
+                "desalojo",
+                "cerraduras",
+                "ilegal",
+                "corte",
+                "landlord"
+            ],
+            "answer": "No. Los desalojos por cuenta propia son ilegales en todos los estados. Su casero no puede cambiar cerraduras, remover sus pertenencias o cortar servicios sin pasar por el proceso judicial de desalojo. Llame al 911 para reportar un desalojo ilegal, documente todo con fotos y contacte a una organización de derechos de inquilinos inmediatamente.",
+            "voiceScript": "No, eso es ilegal. Punto. Tu casero no puede simplemente echarte, tirar tus cosas a la calle o cortarte la luz sin una orden de la corte. Se llama 'desalojo por cuenta propia' y no está permitido en ningún lugar de los Estados Unidos. Llama al 911 de inmediato—diles que es un desalojo ilegal. Toma fotos de todo. Luego comunícate con un grupo de derechos de inquilinos o ayuda legal lo antes posible. Tienes derechos aquí, y tu casero acaba de violar la ley.",
+            "audioFile": "vivienda_desalojo_001.mp3",
+            "relatedScenarios": [
+                "landlord-001"
+            ],
+            "relatedCards": [],
+            "category": "derechos-vivienda"
+        },
+        {
+            "id": "vivienda-documentacion-001",
+            "question": "¿Cómo documento un desalojo ilegal?",
+            "keywords": [
+                "documentar",
+                "evidencia",
+                "fotos",
+                "desalojo",
+                "prueba",
+                "ilegal"
+            ],
+            "answer": "Tome fotos y videos de: cerraduras cambiadas, sus pertenencias afuera, el casero si está presente, cualquier aviso publicado y marcas de tiempo. Guarde todos los textos, correos electrónicos y avisos de su casero. Llame al 911 y obtenga el número de reporte policial. Escriba exactamente lo que pasó con fechas y horas. Esta documentación es crucial para acción legal.",
+            "voiceScript": "Bueno, necesitas documentar todo. Digo, todo. Toma fotos de las cerraduras cambiadas, tus cosas en la calle, el casero si está ahí, cualquier aviso que pusieron—ponle fecha y hora a todo. Captura de pantalla cada texto y correo del casero. Llama al 911 y asegúrate de obtener ese número de reporte policial. Escribe lo que pasó—fechas, horas, lo que se dijo. ¿Todo esto? Esa es tu evidencia. Podrías poder demandar por daños, pero necesitas esta documentación para que funcione.",
+            "audioFile": "vivienda_documentacion_001.mp3",
+            "relatedScenarios": [
+                "landlord-001"
+            ],
+            "relatedCards": [],
+            "category": "derechos-vivienda"
+        },
+        {
+            "id": "recursos-legal-001",
+            "question": "¿Dónde puedo obtener ayuda legal gratuita?",
+            "keywords": [
+                "gratis",
+                "legal",
+                "ayuda",
+                "abogado",
+                "asistencia",
+                "gratuito"
+            ],
+            "answer": "Contacte: (1) Organizaciones de Asistencia Legal en su área, (2) Immigration Advocates Network (immigrationadvocates.org), (3) Proyecto de Derechos de Inmigrantes de ACLU, (4) Centro Nacional de Leyes de Inmigración (NILC), o (5) Los programas pro bono de su colegio de abogados local. Muchos ofrecen consultas gratuitas y representación para quienes califican.",
+            "voiceScript": "Está bien, tienes opciones. Primero, busca Asistencia Legal en tu área—ayudan a personas que no pueden pagar abogados. También está Immigration Advocates Network en immigrationadvocates.org, pueden conectarte con ayuda gratuita o de bajo costo. La ACLU tiene un Proyecto de Derechos de Inmigrantes, y el Centro Nacional de Leyes de Inmigración—eso es NILC—también puede orientarte. Y revisa con tu colegio de abogados local para programas pro bono. Muchos de estos ofrecen consultas gratuitas, así que comunícate.",
+            "audioFile": "recursos_legal_001.mp3",
+            "relatedScenarios": [],
+            "relatedCards": [],
+            "category": "recursos-legales"
+        },
+        {
+            "id": "recursos-daca-001",
+            "question": "¿Qué es DACA y quién califica?",
+            "keywords": [
+                "daca",
+                "acción diferida",
+                "dreamers",
+                "calificar",
+                "elegibilidad",
+                "joven"
+            ],
+            "answer": "DACA (Acción Diferida para los Llegados en la Infancia) protege a ciertos inmigrantes indocumentados que llegaron a EE.UU. de niños de la deportación. Para calificar, debe haber: llegado antes de los 16 años, vivido en EE.UU. desde junio de 2007, tenido menos de 31 años en junio de 2012, y cumplir requisitos de educación o servicio militar. DACA proporciona autorización de trabajo y protección temporal contra la deportación.",
+            "voiceScript": "DACA significa Acción Diferida para los Llegados en la Infancia. Es para personas que llegaron a Estados Unidos de niños. Para calificar, tenías que llegar antes de cumplir 16 años, y has estado aquí desde junio de 2007. También tenías que tener menos de 31 años en junio de 2012. Además, necesitas estar en la escuela, haberte graduado, o haber servido en el militar. Si calificas, DACA te da un permiso de trabajo y protección contra la deportación—aunque es temporal, tienes que renovarlo. No es un camino a la ciudadanía, pero es protección real.",
+            "audioFile": "recursos_daca_001.mp3",
+            "relatedScenarios": [],
+            "relatedCards": [],
+            "category": "recursos-legales"
+        }
+    ]
+}

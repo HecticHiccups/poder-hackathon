@@ -1,0 +1,204 @@
+{
+    "category": "immigration-faq",
+    "language": "en",
+    "version": "1.0",
+    "lastUpdated": "2024-12-13",
+    "questions": [
+        {
+            "id": "ice-door-001",
+            "question": "What should I do if ICE comes to my door?",
+            "keywords": [
+                "ice",
+                "door",
+                "knock",
+                "home",
+                "warrant",
+                "immigration"
+            ],
+            "answer": "Do not open the door. You have the right to remain silent. Through the closed door, ask them to slide any warrant under the door. Only a judicial warrant signed by a judge gives them the right to enter. An administrative warrant (Form I-200 or I-205) does NOT give them permission to enter your home.",
+            "voiceScript": "Okay, first thing—do NOT open that door. You've got rights here. Ask them through the door to slide the warrant underneath. Now here's the key part: check if it's signed by a JUDGE. If it just says 'Department of Homeland Security' or shows Form I-200, that's an administrative warrant, and they can't come in. Stay calm, don't answer questions, and call a lawyer as soon as you can.",
+            "audioFile": "ice_door_001.mp3",
+            "relatedScenarios": [
+                "ice-knock-001"
+            ],
+            "relatedCards": [],
+            "category": "ice-encounters"
+        },
+        {
+            "id": "ice-warrant-001",
+            "question": "What's the difference between administrative and judicial warrants?",
+            "keywords": [
+                "warrant",
+                "administrative",
+                "judicial",
+                "judge",
+                "ice",
+                "difference"
+            ],
+            "answer": "A judicial warrant is signed by a judge and gives ICE legal authority to enter your home. An administrative warrant (Form I-200 or I-205) is signed only by an ICE officer and does NOT grant them entry. Always check for a judge's signature before opening your door.",
+            "voiceScript": "So there's two types of warrants, and this is super important. A judicial warrant—that's the one signed by a JUDGE—that means they can legally enter. But most of the time, ICE shows up with an administrative warrant. That's just Form I-200, signed by an ICE officer, not a judge. With an administrative warrant, you do NOT have to let them in. Look for that judge's signature. No judge? Don't open the door.",
+            "audioFile": "ice_warrant_001.mp3",
+            "relatedScenarios": [
+                "ice-knock-001"
+            ],
+            "relatedCards": [],
+            "category": "ice-encounters"
+        },
+        {
+            "id": "ice-workplace-001",
+            "question": "What are my rights if ICE comes to my workplace?",
+            "keywords": [
+                "ice",
+                "work",
+                "workplace",
+                "job",
+                "employer",
+                "raid"
+            ],
+            "answer": "You have the right to remain silent. Do not run, as it may give officers reasonable suspicion. Calmly state: 'I am exercising my right to remain silent and do not wish to answer questions.' Do not show false documents or lie. You can ask if you are free to leave. Contact an immigration attorney immediately.",
+            "voiceScript": "Alright, if ICE shows up at your workplace, stay calm. Don't run—that can actually make things worse. You've got the right to stay silent, so use it. Say clearly: 'I'm exercising my right to remain silent.' Don't show fake documents, don't lie. Just ask: 'Am I free to leave?' If they say yes, walk away calmly. If not, keep quiet and call a lawyer ASAP.",
+            "audioFile": "ice_workplace_001.mp3",
+            "relatedScenarios": [],
+            "relatedCards": [],
+            "category": "ice-encounters"
+        },
+        {
+            "id": "police-questions-001",
+            "question": "Do I have to answer questions from police?",
+            "keywords": [
+                "police",
+                "questions",
+                "answer",
+                "fifth amendment",
+                "silent",
+                "rights"
+            ],
+            "answer": "No. The Fifth Amendment protects your right to remain silent. You can politely say: 'I am exercising my right to remain silent.' You must provide identification if asked during a lawful stop, but you do not have to answer other questions.",
+            "voiceScript": "Short answer? Nope. The Fifth Amendment has your back here. You can stay silent. Just say: 'I'm exercising my right to remain silent,' and leave it at that. Now, you DO have to show ID if they ask during a traffic stop or lawful stop, but that's it. Anything else? You don't have to say a word.",
+            "audioFile": "police_questions_001.mp3",
+            "relatedScenarios": [
+                "traffic-stop-001"
+            ],
+            "relatedCards": [],
+            "category": "police-interactions"
+        },
+        {
+            "id": "police-record-001",
+            "question": "Can I record the police during a traffic stop?",
+            "keywords": [
+                "record",
+                "film",
+                "video",
+                "police",
+                "traffic stop",
+                "phone",
+                "camera"
+            ],
+            "answer": "Yes. You have the constitutional right to record police officers performing their duties in public. Inform them calmly that you are recording. Keep your hands visible and do not interfere with their work. The recording can be crucial evidence if your rights are violated.",
+            "voiceScript": "Yeah, absolutely you can. It's your constitutional right to record police in public. Just let them know calmly—'I'm recording for my safety'—and keep your hands where they can see them. Don't get in their way, but keep that camera rolling. If anything goes wrong, that recording could save you.",
+            "audioFile": "police_record_001.mp3",
+            "relatedScenarios": [
+                "traffic-stop-001"
+            ],
+            "relatedCards": [],
+            "category": "police-interactions"
+        },
+        {
+            "id": "police-search-001",
+            "question": "What should I say if an officer asks to search my car?",
+            "keywords": [
+                "search",
+                "car",
+                "vehicle",
+                "consent",
+                "fourth amendment",
+                "rights"
+            ],
+            "answer": "Clearly state: 'I do not consent to a search.' The Fourth Amendment protects you from unreasonable searches. The officer may still search if they claim probable cause, but your verbal refusal protects you legally. Never physically resist.",
+            "voiceScript": "Say this clearly: 'I do not consent to a search.' Period. The Fourth Amendment protects you from searches without a good reason. Now, they might search anyway if they claim probable cause, but what matters is you SAID you don't consent. That's on the record. Don't ever physically resist though—that'll just make things worse. Stay calm, state your refusal, and let it play out.",
+            "audioFile": "police_search_001.mp3",
+            "relatedScenarios": [
+                "traffic-stop-001"
+            ],
+            "relatedCards": [],
+            "category": "police-interactions"
+        },
+        {
+            "id": "housing-lockout-001",
+            "question": "Can my landlord lock me out without a court order?",
+            "keywords": [
+                "landlord",
+                "lockout",
+                "eviction",
+                "locks",
+                "illegal",
+                "court"
+            ],
+            "answer": "No. Self-help evictions are illegal in every state. Your landlord cannot change locks, remove your belongings, or shut off utilities without going through the court eviction process. Call 911 to report an illegal lockout, document everything with photos, and contact a tenant rights organization immediately.",
+            "voiceScript": "Nope, that's illegal. Period. Your landlord can't just lock you out, toss your stuff on the curb, or cut your power without a court order. It's called a 'self-help eviction' and it's not allowed anywhere in the U.S. Call 911 right away—tell them it's an illegal lockout. Take photos of everything. Then get in touch with a tenant rights group or legal aid ASAP. You've got rights here, and your landlord just broke the law.",
+            "audioFile": "housing_lockout_001.mp3",
+            "relatedScenarios": [
+                "landlord-001"
+            ],
+            "relatedCards": [],
+            "category": "housing-rights"
+        },
+        {
+            "id": "housing-documentation-001",
+            "question": "How do I document an illegal eviction?",
+            "keywords": [
+                "document",
+                "evidence",
+                "photos",
+                "eviction",
+                "proof",
+                "illegal"
+            ],
+            "answer": "Take photos and videos of: changed locks, your belongings outside, the landlord if present, any notices posted, and timestamps. Save all texts, emails, and notices from your landlord. Call 911 and get a police report number. Write down exactly what happened with dates and times. This documentation is crucial for legal action.",
+            "voiceScript": "Okay, you need to document everything. I mean everything. Take photos of the changed locks, your stuff on the street, the landlord if they're there, any notices they put up—timestamp it all. Screenshot every text and email from your landlord. Call 911 and make sure you get that police report number. Write down what happened—dates, times, what was said. All of this? That's your evidence. You might be able to sue for damages, but you need this documentation to make it stick.",
+            "audioFile": "housing_documentation_001.mp3",
+            "relatedScenarios": [
+                "landlord-001"
+            ],
+            "relatedCards": [],
+            "category": "housing-rights"
+        },
+        {
+            "id": "resources-legal-001",
+            "question": "Where can I get free legal help?",
+            "keywords": [
+                "free",
+                "legal",
+                "help",
+                "lawyer",
+                "attorney",
+                "aid",
+                "assistance"
+            ],
+            "answer": "Contact: (1) Legal Aid organizations in your area, (2) Immigration Advocates Network (immigrationadvocates.org), (3) ACLU Immigrant Rights Project, (4) National Immigration Law Center (NILC), or (5) Your local bar association's pro bono programs. Many offer free consultations and representation for those who qualify.",
+            "voiceScript": "Alright, you've got options. First, look up Legal Aid in your area—they help people who can't afford lawyers. There's also the Immigration Advocates Network at immigrationadvocates.org, they can connect you with free or low-cost help. The ACLU has an Immigrant Rights Project, and the National Immigration Law Center—that's NILC—can point you in the right direction too. And check with your local bar association for pro bono programs. A lot of these offer free consultations, so reach out.",
+            "audioFile": "resources_legal_001.mp3",
+            "relatedScenarios": [],
+            "relatedCards": [],
+            "category": "legal-resources"
+        },
+        {
+            "id": "resources-daca-001",
+            "question": "What is DACA and who qualifies?",
+            "keywords": [
+                "daca",
+                "deferred action",
+                "dreamers",
+                "qualify",
+                "eligibility",
+                "young"
+            ],
+            "answer": "DACA (Deferred Action for Childhood Arrivals) protects certain undocumented immigrants who came to the U.S. as children from deportation. To qualify, you must have: arrived before age 16, lived in the U.S. since June 2007, been under 31 as of June 2012, and meet education or military service requirements. DACA provides work authorization and temporary protection from deportation.",
+            "voiceScript": "DACA stands for Deferred Action for Childhood Arrivals. It's for people who came to the U.S. as kids. To qualify, you had to arrive before you turned 16, and you've been here since June 2007. You also had to be younger than 31 back in June 2012. Plus, you need to either be in school, have graduated, or served in the military. If you qualify, DACA gives you a work permit and protection from deportation—though it's temporary, you have to renew it. It's not a path to citizenship, but it's real protection.",
+            "audioFile": "resources_daca_001.mp3",
+            "relatedScenarios": [],
+            "relatedCards": [],
+            "category": "legal-resources"
+        }
+    ]
+}
