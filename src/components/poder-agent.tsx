@@ -418,9 +418,9 @@ export function PoderAgent() {
         <>
             <audio ref={audioRef} className="hidden" preload="none" />
 
-            {/* FAB */}
+            {/* FAB - positioned above bottom nav (which is ~56px tall) */}
             <motion.button
-                className="fixed bottom-4 right-4 z-50 flex h-14 w-14 items-center justify-center rounded-full shadow-lg active:scale-95 sm:bottom-6 sm:right-6 sm:h-16 sm:w-16 focus:outline-none focus:ring-4 focus:ring-[#FF6B00]/50"
+                className="fixed bottom-20 right-4 z-50 flex h-14 w-14 items-center justify-center rounded-full shadow-lg active:scale-95 sm:bottom-6 sm:right-6 sm:h-16 sm:w-16 focus:outline-none focus:ring-4 focus:ring-[#FF6B00]/50"
                 style={{
                     background: 'linear-gradient(135deg, #FF6B00 0%, #FF8533 100%)',
                     boxShadow: '0 4px 20px rgba(255, 107, 0, 0.4)',
