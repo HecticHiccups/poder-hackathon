@@ -200,7 +200,9 @@ export function PoderAgent() {
         setTranscript('');
         setResponse(null);
         setError(null);
-        setSuggestions(searchQuestions('', language, 5));
+        const newSuggestions = searchQuestions('', language, 5);
+        console.log('[Suggestions] Loaded for language:', language, newSuggestions);
+        setSuggestions(newSuggestions);
         // Clear conversation session when language changes
         setConversationSessionId(null);
         setResponseSource(null);
@@ -410,13 +412,38 @@ export function PoderAgent() {
         }
     }, [language, playAnswer]);
 
-    // Cleanup audio on unmount
+    // Audio element event listeners for debugging
     useEffect(() => {
         const audio = audioRef.current;
         if (audio) {
-            const handleEnded = () => setIsPlaying(false);
+            const handleEnded = () => {
+                console.log('[Audio Event] ended');
+                setIsPlaying(false);
+            };
+            const handleCanPlay = () => console.log('[Audio Event] canplay - ready to play');
+            const handleLoadStart = () => console.log('[Audio Event] loadstart');
+            const handleError = (e: Event) => {
+                const target = e.target as HTMLAudioElement;
+                console.error('[Audio Event] error:', target.error?.code, target.error?.message);
+            };
+            const handlePlaying = () => console.log('[Audio Event] playing');
+            const handleWaiting = () => console.log('[Audio Event] waiting (buffering)');
+
             audio.addEventListener('ended', handleEnded);
-            return () => audio.removeEventListener('ended', handleEnded);
+            audio.addEventListener('canplay', handleCanPlay);
+            audio.addEventListener('loadstart', handleLoadStart);
+            audio.addEventListener('error', handleError);
+            audio.addEventListener('playing', handlePlaying);
+            audio.addEventListener('waiting', handleWaiting);
+
+            return () => {
+                audio.removeEventListener('ended', handleEnded);
+                audio.removeEventListener('canplay', handleCanPlay);
+                audio.removeEventListener('loadstart', handleLoadStart);
+                audio.removeEventListener('error', handleError);
+                audio.removeEventListener('playing', handlePlaying);
+                audio.removeEventListener('waiting', handleWaiting);
+            };
         }
     }, []);
 
@@ -450,6 +477,8 @@ export function PoderAgent() {
     }, [isListening]);
 
     const handleManualPlay = useCallback((answer: PoderAnswer) => {
+        console.log('[Manual Play] Answer object:', answer);
+        console.log('[Manual Play] Audio URL:', answer.audioUrl);
         setResponse(answer);
         setError(null);
         setTranscript(answer.question);
@@ -482,7 +511,6 @@ export function PoderAgent() {
                 className="hidden"
                 preload="auto"
                 playsInline
-                crossOrigin="anonymous"
             />
 
             {/* Drag boundary - full viewport */}
@@ -677,6 +705,10 @@ export function PoderAgent() {
                                     {language === 'en'
                                         ? 'Powered by Poder • Not legal advice'
                                         : 'Desarrollado por Poder • No es asesoría legal'}
+                                </p>
+                                {/* Debug info - remove after testing */}
+                                <p className="text-center text-[9px] text-gray-600 mt-1">
+                                    Audio: {isPlaying ? '▶️ Playing' : '⏸️ Stopped'} | Suggestions: {suggestions.length}
                                 </p>
                             </div>
                         </motion.div>
