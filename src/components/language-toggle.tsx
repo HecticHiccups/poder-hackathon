@@ -9,21 +9,21 @@ export function LanguageToggle() {
   return (
     <motion.button
       onClick={toggleLanguage}
-      className="fixed top-4 left-4 z-50 flex items-center gap-1.5 h-11 px-3 rounded-full bg-[var(--poder-charcoal)]/90 backdrop-blur-sm border border-[var(--poder-slate)] active:scale-95 transition-all shadow-lg"
-      whileTap={{ scale: 0.95 }}
+      className="fixed top-3 left-3 z-50 flex items-center justify-center w-9 h-9 sm:w-auto sm:h-10 sm:gap-1.5 sm:px-3 rounded-full bg-[var(--poder-charcoal)]/80 backdrop-blur-sm border border-[var(--poder-slate)]/50 active:scale-95 transition-all shadow-md"
+      whileTap={{ scale: 0.9 }}
       aria-label={`Switch to ${language === 'en' ? 'Spanish' : 'English'}`}
       role="switch"
       aria-checked={language === 'es'}
     >
-      {/* Current language flag - larger for mobile */}
+      {/* Flag only on mobile, flag + text on desktop */}
       <AnimatePresence mode="wait">
         <motion.span
           key={language}
-          initial={{ opacity: 0, y: -10, scale: 0.8 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: 10, scale: 0.8 }}
-          transition={{ duration: 0.15 }}
-          className="text-xl"
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.8 }}
+          transition={{ duration: 0.12 }}
+          className="text-base sm:text-lg"
           role="img"
           aria-label={language === 'en' ? 'English' : 'Español'}
         >
@@ -31,20 +31,10 @@ export function LanguageToggle() {
         </motion.span>
       </AnimatePresence>
 
-      {/* Language code with highlight */}
-      <span className="font-code text-sm font-semibold text-[var(--poder-paper)]">
+      {/* Language code - hidden on mobile */}
+      <span className="hidden sm:inline font-code text-xs font-medium text-[var(--poder-paper)] opacity-80">
         {language.toUpperCase()}
       </span>
-
-      {/* Switch indicator */}
-      <motion.span
-        className="text-[var(--poder-paper)] opacity-50 text-xs"
-        animate={{ rotate: [0, 180] }}
-        transition={{ duration: 0.3 }}
-        key={language + '-arrow'}
-      >
-        ⇄
-      </motion.span>
     </motion.button>
   );
 }

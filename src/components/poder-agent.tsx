@@ -245,9 +245,14 @@ export function PoderAgent() {
                 });
 
                 const data = await apiResponse.json();
+                console.log('[Poder Agent] API response:', data);
 
                 if (!apiResponse.ok) {
-                    throw new Error(data.error || 'API request failed');
+                    // Check for specific config errors
+                    if (data.error?.includes('not configured')) {
+                        throw new Error('SERVICE_NOT_CONFIGURED');
+                    }
+                    throw new Error(data.error || data.message || 'API request failed');
                 }
 
                 if (data.type === 'dynamic') {
@@ -269,15 +274,36 @@ export function PoderAgent() {
 
                     console.log('[Poder Agent] Dynamic response played, time:', data.duration_ms, 'ms');
                 } else if (data.type === 'error') {
-                    throw new Error(data.message);
+                    throw new Error(data.message || 'Unknown error');
                 }
             } catch (error) {
                 console.error('[Poder Agent] Dynamic Q&A error:', error);
-                setError(
-                    language === 'en'
-                        ? "I couldn't process that. Please try again."
-                        : "No pude procesar eso. Por favor intenta de nuevo."
-                );
+                const errorMsg = error instanceof Error ? error.message : 'Unknown error';
+
+                // Provide helpful fallback response for greetings when API fails
+                if (intent === 'greeting') {
+                    const fallbackAnswer: PoderAnswer = {
+                        id: 'fallback-greeting',
+                        question: text,
+                        answer: language === 'en'
+                            ? "Hi! I'm Poder. I help people understand their rights with ICE, police, and landlords. Try asking a question from the list below!"
+                            : "¡Hola! Soy Poder. Ayudo a las personas a entender sus derechos con ICE, policía y propietarios. ¡Intenta preguntar algo de la lista abajo!",
+                        voiceScript: '',
+                        audioUrl: '',
+                        relatedScenarios: [],
+                        relatedCards: [],
+                        category: 'fallback',
+                        confidence: 1,
+                    };
+                    setResponse(fallbackAnswer);
+                    setResponseSource(null);
+                } else {
+                    setError(
+                        language === 'en'
+                            ? "Voice service temporarily unavailable. Try a question below!"
+                            : "Servicio de voz no disponible. ¡Prueba una pregunta abajo!"
+                    );
+                }
             } finally {
                 setIsAgentThinking(false);
             }
