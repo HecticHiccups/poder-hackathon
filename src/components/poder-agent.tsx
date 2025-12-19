@@ -124,21 +124,30 @@ export function PoderAgent() {
     const [isAgentThinking, setIsAgentThinking] = useState(false);
     const [conversationSessionId, setConversationSessionId] = useState<string | null>(null);
     const [responseSource, setResponseSource] = useState<'faq' | 'agent' | null>(null);
+    const [isDragging, setIsDragging] = useState(false);
 
     // Refs
     const audioRef = useRef<HTMLAudioElement | null>(null);
     const recognitionRef = useRef<any>(null);
     const dragControls = useDragControls();
+    const fabConstraintsRef = useRef<HTMLDivElement | null>(null);
 
-    // Initial permission check
+    // Initial permission check - only set false if explicitly denied
     useEffect(() => {
         if (typeof navigator !== 'undefined' && navigator.permissions) {
             navigator.permissions.query({ name: 'microphone' as PermissionName })
                 .then((result) => {
-                    setHasMicPermission(result.state === 'granted');
-                    result.onchange = () => setHasMicPermission(result.state === 'granted');
+                    // Only disable if explicitly denied, allow 'prompt' state
+                    setHasMicPermission(result.state !== 'denied');
+                    result.onchange = () => setHasMicPermission(result.state !== 'denied');
                 })
-                .catch(() => setHasMicPermission(null));
+                .catch(() => {
+                    // Permission API not supported - assume allowed until proven otherwise
+                    setHasMicPermission(true);
+                });
+        } else {
+            // No permissions API - assume allowed
+            setHasMicPermission(true);
         }
     }, []);
 
@@ -418,19 +427,37 @@ export function PoderAgent() {
         <>
             <audio ref={audioRef} className="hidden" preload="none" />
 
-            {/* FAB - positioned above bottom nav (which is ~56px tall) */}
+            {/* Drag boundary - full viewport */}
+            <div ref={fabConstraintsRef} className="fixed inset-0 pointer-events-none z-40" />
+
+            {/* FAB - draggable, positioned above bottom nav */}
             <motion.button
-                className="fixed bottom-20 right-4 z-50 flex h-14 w-14 items-center justify-center rounded-full shadow-lg active:scale-95 sm:bottom-6 sm:right-6 sm:h-16 sm:w-16 focus:outline-none focus:ring-4 focus:ring-[#FF6B00]/50"
+                className="fixed bottom-20 right-4 z-50 flex h-14 w-14 items-center justify-center rounded-full shadow-lg sm:bottom-6 sm:right-6 sm:h-16 sm:w-16 focus:outline-none focus:ring-4 focus:ring-[#FF6B00]/50 touch-none cursor-grab active:cursor-grabbing"
                 style={{
                     background: 'linear-gradient(135deg, #FF6B00 0%, #FF8533 100%)',
                     boxShadow: '0 4px 20px rgba(255, 107, 0, 0.4)',
                 }}
-                onClick={() => setIsOpen(true)}
+                onClick={() => {
+                    // Only open if not dragging
+                    if (!isDragging) {
+                        setIsOpen(true);
+                    }
+                }}
+                drag
+                dragConstraints={fabConstraintsRef}
+                dragElastic={0.1}
+                dragMomentum={false}
+                onDragStart={() => setIsDragging(true)}
+                onDragEnd={() => {
+                    // Small delay to prevent click firing after drag
+                    setTimeout(() => setIsDragging(false), 100);
+                }}
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ type: 'spring', stiffness: 260, damping: 20, delay: 0.5 }}
-                whileTap={{ scale: 0.9 }}
-                aria-label="Open Poder voice assistant"
+                whileTap={{ scale: isDragging ? 1 : 0.9 }}
+                whileDrag={{ scale: 1.1 }}
+                aria-label="Open Poder voice assistant (drag to reposition)"
             >
                 <div className="relative flex items-center justify-center">
                     <span className="text-2xl sm:text-3xl relative z-10" role="img" aria-hidden="true">🎙️</span>
