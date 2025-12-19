@@ -2,7 +2,8 @@
 
 import { motion, AnimatePresence, PanInfo } from "framer-motion";
 import { useState } from "react";
-import { RightsCard, CATEGORY_INFO } from "@/data/rights-content";
+import { RightsCard, CATEGORY_INFO, getLocalizedCard, getCategoryLabel } from "@/data/rights-content";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface RightsCardUIProps {
     card: RightsCard;
@@ -14,7 +15,10 @@ interface RightsCardUIProps {
 export function RightsCardUI({ card, onSwipeLeft, onSwipeRight, isTop }: RightsCardUIProps) {
     const [exitX, setExitX] = useState(0);
     const [isExpanded, setIsExpanded] = useState(false);
+    const { language, t } = useLanguage();
     const categoryInfo = CATEGORY_INFO[card.category];
+    const localizedCard = getLocalizedCard(card, language);
+    const categoryLabel = getCategoryLabel(card.category, language);
 
     const handleDragEnd = (_: unknown, info: PanInfo) => {
         if (info.offset.x > 100) {
@@ -69,7 +73,7 @@ export function RightsCardUI({ card, onSwipeLeft, onSwipeRight, isTop }: RightsC
                                 background: `${categoryInfo.color}15`,
                             }}
                         >
-                            {categoryInfo.emoji} {categoryInfo.label}
+                            {categoryInfo.emoji} {categoryLabel}
                         </span>
                         <span className="badge-power">
                             +{card.powerPoints} PP
@@ -81,12 +85,12 @@ export function RightsCardUI({ card, onSwipeLeft, onSwipeRight, isTop }: RightsC
                         className="font-display text-2xl sm:text-3xl mb-4"
                         style={{ color: categoryInfo.color }}
                     >
-                        {card.title}
+                        {localizedCard.title}
                     </h2>
 
                     {/* Summary */}
                     <p className="font-body text-lg text-[var(--poder-paper)] opacity-90 mb-6 leading-relaxed">
-                        {card.summary}
+                        {localizedCard.summary}
                     </p>
 
                     {/* Expandable Content */}
@@ -100,10 +104,10 @@ export function RightsCardUI({ card, onSwipeLeft, onSwipeRight, isTop }: RightsC
                             >
                                 <div className="pt-4 border-t border-[var(--poder-slate)]">
                                     <div className="font-body text-[var(--poder-paper)] opacity-80 whitespace-pre-line leading-relaxed">
-                                        {card.fullContent}
+                                        {localizedCard.fullContent}
                                     </div>
                                     <p className="mt-4 font-code text-xs text-[var(--poder-paper)] opacity-50">
-                                        Source: {card.source}
+                                        {t('card.source')}: {card.source}
                                     </p>
                                 </div>
                             </motion.div>
@@ -115,17 +119,17 @@ export function RightsCardUI({ card, onSwipeLeft, onSwipeRight, isTop }: RightsC
                         onClick={() => setIsExpanded(!isExpanded)}
                         className="mt-4 font-code text-sm text-[var(--poder-neon)] hover:underline"
                     >
-                        {isExpanded ? "← Show Less" : "Learn More →"}
+                        {isExpanded ? t('card.showLess') : t('card.learnMore')}
                     </button>
 
                     {/* Swipe Hints */}
                     {isTop && (
                         <div className="flex justify-between mt-6 pt-4 border-t border-[var(--poder-slate)]">
                             <span className="font-code text-xs text-[var(--poder-paper)] opacity-40">
-                                ← Swipe to skip
+                                {t('card.swipeSkip')}
                             </span>
                             <span className="font-code text-xs text-[var(--poder-fire)] opacity-60">
-                                Swipe to learn →
+                                {t('card.swipeLearn')}
                             </span>
                         </div>
                     )}
@@ -137,12 +141,14 @@ export function RightsCardUI({ card, onSwipeLeft, onSwipeRight, isTop }: RightsC
 
 // Category filter pills
 interface CategoryFilterProps {
-    categories: Array<{ key: string; label: string; emoji: string; color: string }>;
+    categories: Array<{ key: string; label: string; label_es: string; emoji: string; color: string }>;
     selected: string | null;
     onSelect: (category: string | null) => void;
 }
 
 export function CategoryFilter({ categories, selected, onSelect }: CategoryFilterProps) {
+    const { language, t } = useLanguage();
+
     return (
         <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
             <button
@@ -152,7 +158,7 @@ export function CategoryFilter({ categories, selected, onSelect }: CategoryFilte
                     : "bg-[var(--poder-charcoal)] text-[var(--poder-paper)] opacity-70 hover:opacity-100"
                     }`}
             >
-                All
+                {t('card.all')}
             </button>
             {categories.map((cat) => (
                 <button
@@ -166,7 +172,7 @@ export function CategoryFilter({ categories, selected, onSelect }: CategoryFilte
                         background: selected === cat.key ? cat.color : undefined,
                     }}
                 >
-                    {cat.emoji} {cat.label}
+                    {cat.emoji} {language === 'es' ? cat.label_es : cat.label}
                 </button>
             ))}
         </div>
@@ -181,16 +187,17 @@ interface ProgressIndicatorProps {
 }
 
 export function ProgressIndicator({ current, total, points }: ProgressIndicatorProps) {
+    const { t } = useLanguage();
     const progress = ((current + 1) / total) * 100;
 
     return (
         <div className="space-y-2">
             <div className="flex justify-between items-center">
                 <span className="font-code text-xs text-[var(--poder-paper)] opacity-60">
-                    {current + 1} / {total} cards
+                    {current + 1} / {total} {t('card.cards')}
                 </span>
                 <span className="font-code text-xs text-[var(--poder-gold)]">
-                    ⚡ {points} Power Points
+                    ⚡ {points} {t('learn.powerPoints')}
                 </span>
             </div>
             <div className="h-1 bg-[var(--poder-charcoal)] rounded-full overflow-hidden">

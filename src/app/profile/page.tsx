@@ -6,10 +6,13 @@ import {
     DEMO_USER,
     ALL_BADGES,
     getRarityColor,
+    getTitle,
     Badge
 } from "@/data/user-data";
+import { useLanguage } from "@/context/LanguageContext";
 
 export default function ProfilePage() {
+    const { t, language } = useLanguage();
     const user = DEMO_USER;
     const xpProgress = (user.stats.xp / user.stats.xpToNextLevel) * 100;
 
@@ -30,7 +33,7 @@ export default function ProfilePage() {
                             PODER
                         </Link>
                         <button className="font-code text-sm text-[var(--poder-paper)] opacity-60 hover:opacity-100">
-                            ⚙️ Settings
+                            ⚙️ {t('profile.settings')}
                         </button>
                     </div>
                 </div>
@@ -54,17 +57,17 @@ export default function ProfilePage() {
                         {user.displayName}
                     </h1>
                     <p className="font-code text-sm text-[var(--poder-gold)] mt-1">
-                        {user.title}
+                        {getTitle(user.stats.level, language)}
                     </p>
 
                     {/* Level Progress */}
                     <div className="mt-6">
                         <div className="flex justify-between items-center mb-2">
                             <span className="font-code text-xs text-[var(--poder-paper)] opacity-60">
-                                Level {user.stats.level}
+                                {t('profile.level')} {user.stats.level}
                             </span>
                             <span className="font-code text-xs text-[var(--poder-paper)] opacity-60">
-                                {user.stats.xp} / {user.stats.xpToNextLevel} XP
+                                {user.stats.xp} / {user.stats.xpToNextLevel} {t('profile.xp')}
                             </span>
                         </div>
                         <div className="h-3 bg-[var(--poder-slate)] rounded-full overflow-hidden">
@@ -84,7 +87,7 @@ export default function ProfilePage() {
                             {user.stats.powerPoints}
                         </span>
                         <span className="font-code text-xs text-[var(--poder-paper)] opacity-60">
-                            Power Points
+                            {t('profile.powerPoints')}
                         </span>
                     </div>
                 </motion.div>
@@ -101,7 +104,7 @@ export default function ProfilePage() {
                             {user.stats.totalCardsLearned}
                         </p>
                         <p className="font-code text-xs text-[var(--poder-paper)] opacity-60">
-                            Cards Learned
+                            {t('profile.cardsLearned')}
                         </p>
                     </div>
                     <div className="card-resistance text-center">
@@ -109,7 +112,7 @@ export default function ProfilePage() {
                             {user.stats.totalScenariosCompleted}
                         </p>
                         <p className="font-code text-xs text-[var(--poder-paper)] opacity-60">
-                            Scenarios Done
+                            {t('profile.scenariosDone')}
                         </p>
                     </div>
                     <div className="card-resistance text-center">
@@ -117,7 +120,7 @@ export default function ProfilePage() {
                             {user.stats.currentStreak}
                         </p>
                         <p className="font-code text-xs text-[var(--poder-paper)] opacity-60">
-                            Day Streak 🔥
+                            {t('profile.dayStreak')} 🔥
                         </p>
                     </div>
                     <div className="card-resistance text-center">
@@ -125,7 +128,7 @@ export default function ProfilePage() {
                             {Math.round((user.stats.scenariosWon / user.stats.totalScenariosCompleted) * 100) || 0}%
                         </p>
                         <p className="font-code text-xs text-[var(--poder-paper)] opacity-60">
-                            Win Rate
+                            {t('profile.winRate')}
                         </p>
                     </div>
                 </motion.div>
@@ -138,7 +141,7 @@ export default function ProfilePage() {
                 >
                     <div className="flex items-center justify-between mb-4">
                         <h2 className="font-display text-xl text-[var(--poder-paper)]">
-                            Badges
+                            {t('profile.badges')}
                         </h2>
                         <span className="font-code text-xs text-[var(--poder-paper)] opacity-50">
                             {user.badges.length} / {ALL_BADGES.length}
@@ -148,22 +151,22 @@ export default function ProfilePage() {
                     {/* Earned Badges */}
                     <div className="grid grid-cols-4 gap-3 mb-6">
                         {user.badges.map((badge, index) => (
-                            <BadgeCard key={badge.id} badge={badge} earned index={index} />
+                            <BadgeCard key={badge.id} badge={badge} earned index={index} t={t} />
                         ))}
                     </div>
 
                     {/* Locked Badges */}
                     <p className="font-code text-xs text-[var(--poder-paper)] opacity-40 mb-3">
-                        Locked ({lockedBadges.length})
+                        {t('profile.locked')} ({lockedBadges.length})
                     </p>
                     <div className="grid grid-cols-4 gap-3">
                         {lockedBadges.slice(0, 8).map((badge, index) => (
-                            <BadgeCard key={badge.id} badge={badge} earned={false} index={index} />
+                            <BadgeCard key={badge.id} badge={badge} earned={false} index={index} t={t} />
                         ))}
                     </div>
                     {lockedBadges.length > 8 && (
                         <p className="font-code text-xs text-[var(--poder-paper)] opacity-40 text-center mt-3">
-                            +{lockedBadges.length - 8} more to unlock
+                            +{lockedBadges.length - 8} {t('profile.moreToUnlock')}
                         </p>
                     )}
                 </motion.div>
@@ -176,16 +179,16 @@ export default function ProfilePage() {
                     className="mt-8 space-y-3"
                 >
                     <Link href="/learn" className="btn-fire w-full text-center block">
-                        Continue Learning
+                        {t('profile.continueLearning')}
                     </Link>
                     <Link href="/play" className="btn-neon w-full text-center block">
-                        Play Scenarios
+                        {t('profile.playScenarios')}
                     </Link>
                 </motion.div>
 
                 {/* Member Since */}
                 <p className="font-code text-xs text-[var(--poder-paper)] opacity-30 text-center mt-8">
-                    Member since {user.stats.joinedAt.toLocaleDateString("en-US", { month: "long", year: "numeric" })}
+                    {t('profile.memberSince')} {user.stats.joinedAt.toLocaleDateString(language === 'es' ? 'es-ES' : 'en-US', { month: "long", year: "numeric" })}
                 </p>
             </div>
 
@@ -196,25 +199,25 @@ export default function ProfilePage() {
                         href="/"
                         className="flex-1 py-4 text-center font-code text-sm text-[var(--poder-paper)] opacity-50 hover:opacity-100"
                     >
-                        Home
+                        {t('nav.home')}
                     </Link>
                     <Link
                         href="/learn"
                         className="flex-1 py-4 text-center font-code text-sm text-[var(--poder-paper)] opacity-50 hover:opacity-100"
                     >
-                        Learn
+                        {t('nav.learn')}
                     </Link>
                     <Link
                         href="/play"
                         className="flex-1 py-4 text-center font-code text-sm text-[var(--poder-paper)] opacity-50 hover:opacity-100"
                     >
-                        Play
+                        {t('nav.play')}
                     </Link>
                     <Link
                         href="/profile"
                         className="flex-1 py-4 text-center font-code text-sm text-[var(--poder-fire)]"
                     >
-                        Profile
+                        {t('nav.profile')}
                     </Link>
                 </div>
             </nav>
@@ -222,16 +225,45 @@ export default function ProfilePage() {
     );
 }
 
+// Badge ID to translation key mapping
+const BADGE_KEY_MAP: Record<string, string> = {
+    "first-card": "firstStep",
+    "immigration-101": "immigration101",
+    "housing-hero": "housingHero",
+    "labor-leader": "laborLeader",
+    "justice-seeker": "justiceSeeker",
+    "health-aware": "healthAware",
+    "knowledge-master": "knowledgeMaster",
+    "first-scenario": "simulationInitiate",
+    "traffic-survivor": "trafficStopSurvivor",
+    "door-defender": "doorDefender",
+    "tenant-champion": "tenantChampion",
+    "scenario-master": "scenarioMaster",
+    "perfect-run": "perfectRun",
+    "streak-3": "gettingStarted",
+    "streak-7": "weekWarrior",
+    "streak-30": "monthOfPower",
+    "streak-100": "unstoppable",
+    "early-adopter": "earlyAdopter",
+    "matcha-supporter": "matchaSupporter",
+};
+
 // Badge Card Component
 function BadgeCard({
     badge,
     earned,
-    index
+    index,
+    t
 }: {
     badge: Badge;
     earned: boolean;
     index: number;
+    t: (key: string) => string;
 }) {
+    const badgeKey = BADGE_KEY_MAP[badge.id] || badge.id;
+    const badgeName = t(`badge.${badgeKey}`);
+    const badgeDesc = t(`badge.desc.${badgeKey}`);
+
     return (
         <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
@@ -241,7 +273,7 @@ function BadgeCard({
                     ? "bg-[var(--poder-charcoal)] border border-[var(--poder-slate)]"
                     : "bg-[var(--poder-midnight)] opacity-40"
                 }`}
-            title={earned ? `${badge.name}: ${badge.description}` : `🔒 ${badge.name}`}
+            title={earned ? `${badgeName}: ${badgeDesc}` : `🔒 ${badgeName}`}
         >
             <span className={`text-2xl ${!earned && "grayscale"}`}>
                 {earned ? badge.emoji : "🔒"}
@@ -253,7 +285,7 @@ function BadgeCard({
                 />
             )}
             <p className="font-code text-[8px] text-[var(--poder-paper)] opacity-60 mt-1 truncate w-full text-center">
-                {badge.name}
+                {badgeName}
             </p>
         </motion.div>
     );

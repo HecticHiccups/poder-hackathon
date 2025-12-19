@@ -1,6 +1,8 @@
 // User gamification data
 // Badges, achievements, and profile information
 
+import type { Language } from "@/context/LanguageContext";
+
 export interface Badge {
     id: string;
     name: string;
@@ -48,17 +50,17 @@ export const LEVEL_THRESHOLDS = [
     4600,   // Level 10+
 ];
 
-export const TITLES: Record<number, string> = {
-    1: "Newcomer",
-    2: "Aware Citizen",
-    3: "Rights Learner",
-    4: "Knowledge Seeker",
-    5: "Rights Defender",
-    6: "Legal Scholar",
-    7: "Rights Champion",
-    8: "Power Advocate",
-    9: "Freedom Fighter",
-    10: "Poder Master",
+export const TITLES: Record<number, { en: string; es: string }> = {
+    1: { en: "Newcomer", es: "Principiante" },
+    2: { en: "Aware Citizen", es: "Ciudadano Consciente" },
+    3: { en: "Rights Learner", es: "Aprendiz de Derechos" },
+    4: { en: "Knowledge Seeker", es: "Buscador de Conocimiento" },
+    5: { en: "Rights Defender", es: "Defensor de Derechos" },
+    6: { en: "Legal Scholar", es: "Erudito Legal" },
+    7: { en: "Rights Champion", es: "Campeón de Derechos" },
+    8: { en: "Power Advocate", es: "Defensor del Poder" },
+    9: { en: "Freedom Fighter", es: "Luchador por la Libertad" },
+    10: { en: "Poder Master", es: "Maestro del Poder" },
 };
 
 // All available badges
@@ -253,8 +255,9 @@ export const DEMO_USER: UserProfile = {
 };
 
 // Utility functions
-export function getTitle(level: number): string {
-    return TITLES[Math.min(level, 10)] || TITLES[10];
+export function getTitle(level: number, language: Language = 'en'): string {
+    const titleObj = TITLES[Math.min(level, 10)] || TITLES[10];
+    return titleObj[language];
 }
 
 export function calculateLevel(xp: number): { level: number; xpInLevel: number; xpToNext: number } {

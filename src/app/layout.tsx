@@ -62,6 +62,8 @@ export const metadata: Metadata = {
 };
 
 import { PoderAgent } from "@/components/poder-agent";
+import { Providers } from "@/components/providers";
+import { LanguageToggle } from "@/components/language-toggle";
 
 export default function RootLayout({
   children,
@@ -74,8 +76,11 @@ export default function RootLayout({
         className={`${bebasNeue.variable} ${bitter.variable} ${jetbrainsMono.variable} antialiased`}
         suppressHydrationWarning
       >
-        {children}
-        <PoderAgent />
+        <Providers>
+          <LanguageToggle />
+          {children}
+          <PoderAgent />
+        </Providers>
       </body>
     </html>
   );

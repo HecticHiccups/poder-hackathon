@@ -5,8 +5,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { RIGHTS_CARDS, CATEGORY_INFO, RightsCategory } from "@/data/rights-content";
 import { RightsCardUI, CategoryFilter, ProgressIndicator } from "@/components/rights-card";
+import { useLanguage } from "@/context/LanguageContext";
 
 export default function LearnPage() {
+    const { t } = useLanguage();
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [earnedPoints, setEarnedPoints] = useState(0);
@@ -69,13 +71,13 @@ export default function LearnPage() {
                         </Link>
                         <div className="flex items-center gap-4">
                             <span className="badge-power">
-                                ⚡ {earnedPoints} PP
+                                ⚡ {earnedPoints} {t('learn.pp')}
                             </span>
                             <Link
                                 href="/play"
                                 className="font-code text-sm text-[var(--poder-neon)] hover:underline"
                             >
-                                Play →
+                                {t('nav.play')} →
                             </Link>
                         </div>
                     </div>
@@ -121,10 +123,10 @@ export default function LearnPage() {
                             >
                                 <span className="text-6xl mb-4">🔥</span>
                                 <h2 className="font-display text-4xl text-[var(--poder-gold)] mb-2">
-                                    Stack Complete!
+                                    {t('learn.stackComplete')}
                                 </h2>
                                 <p className="font-body text-[var(--poder-paper)] opacity-70 mb-6">
-                                    You earned <span className="text-[var(--poder-gold)]">{earnedPoints}</span> Power Points
+                                    {t('learn.earnedPoints')} <span className="text-[var(--poder-gold)]">{earnedPoints}</span> {t('learn.powerPoints')}
                                 </p>
                                 <div className="flex flex-col gap-3 w-full max-w-xs">
                                     <button
@@ -133,10 +135,10 @@ export default function LearnPage() {
                                         }}
                                         className="btn-fire"
                                     >
-                                        Review Again
+                                        {t('learn.reviewAgain')}
                                     </button>
                                     <Link href="/play" className="btn-neon text-center">
-                                        Test Your Knowledge
+                                        {t('learn.testKnowledge')}
                                     </Link>
                                 </div>
                             </motion.div>
@@ -151,13 +153,13 @@ export default function LearnPage() {
                             onClick={handleSwipeLeft}
                             className="flex-1 py-3 rounded-lg bg-[var(--poder-charcoal)] border border-[var(--poder-slate)] font-code text-sm text-[var(--poder-paper)] opacity-70 hover:opacity-100 transition-opacity"
                         >
-                            Skip
+                            {t('learn.skip')}
                         </button>
                         <button
                             onClick={handleSwipeRight}
                             className="flex-1 py-3 rounded-lg bg-[var(--poder-fire)] font-code text-sm text-[var(--poder-cream)] hover:bg-[var(--poder-fire-glow)] transition-colors"
                         >
-                            I Learned This ✓
+                            {t('learn.iLearned')}
                         </button>
                     </div>
                 )}
@@ -169,7 +171,7 @@ export default function LearnPage() {
                             {learnedCards.size}
                         </p>
                         <p className="font-code text-xs text-[var(--poder-paper)] opacity-50">
-                            Learned
+                            {t('learn.learned')}
                         </p>
                     </div>
                     <div className="text-center p-4 bg-[var(--poder-charcoal)] rounded-lg">
@@ -177,7 +179,7 @@ export default function LearnPage() {
                             {earnedPoints}
                         </p>
                         <p className="font-code text-xs text-[var(--poder-paper)] opacity-50">
-                            Points
+                            {t('learn.points')}
                         </p>
                     </div>
                     <div className="text-center p-4 bg-[var(--poder-charcoal)] rounded-lg">
@@ -185,7 +187,7 @@ export default function LearnPage() {
                             {filteredCards.length - currentIndex}
                         </p>
                         <p className="font-code text-xs text-[var(--poder-paper)] opacity-50">
-                            Remaining
+                            {t('learn.remaining')}
                         </p>
                     </div>
                 </div>
@@ -198,25 +200,25 @@ export default function LearnPage() {
                         href="/"
                         className="flex-1 py-4 text-center font-code text-sm text-[var(--poder-paper)] opacity-50 hover:opacity-100"
                     >
-                        Home
+                        {t('nav.home')}
                     </Link>
                     <Link
                         href="/learn"
                         className="flex-1 py-4 text-center font-code text-sm text-[var(--poder-fire)]"
                     >
-                        Learn
+                        {t('nav.learn')}
                     </Link>
                     <Link
                         href="/play"
                         className="flex-1 py-4 text-center font-code text-sm text-[var(--poder-paper)] opacity-50 hover:opacity-100"
                     >
-                        Play
+                        {t('nav.play')}
                     </Link>
                     <Link
                         href="/profile"
                         className="flex-1 py-4 text-center font-code text-sm text-[var(--poder-paper)] opacity-50 hover:opacity-100"
                     >
-                        Profile
+                        {t('nav.profile')}
                     </Link>
                 </div>
             </nav>

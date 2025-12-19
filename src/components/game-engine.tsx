@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { GameScenario, ScenarioStep, ScenarioChoice, getStepById } from "@/data/scenarios";
+import { GameScenario, ScenarioStep, ScenarioChoice, getStepById, getLocalizedStep, getLocalizedChoice, getLocalizedScenario } from "@/data/scenarios";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface GameEngineProps {
     scenario: GameScenario;
@@ -16,8 +17,10 @@ export function GameEngine({ scenario, onComplete, onExit }: GameEngineProps) {
     const [showFeedback, setShowFeedback] = useState<ScenarioChoice | null>(null);
     const [timeLeft, setTimeLeft] = useState<number | null>(null);
     const [stepHistory, setStepHistory] = useState<string[]>([]);
+    const { language, t } = useLanguage();
 
     const currentStep = getStepById(scenario, currentStepId);
+    const localizedStep = currentStep ? getLocalizedStep(currentStep, language) : null;
 
     // Timer logic
     useEffect(() => {
@@ -98,10 +101,10 @@ export function GameEngine({ scenario, onComplete, onExit }: GameEngineProps) {
                         onClick={onExit}
                         className="font-code text-sm text-[var(--poder-paper)] opacity-60 hover:opacity-100"
                     >
-                        ← Exit
+                        {t('game.exit')}
                     </button>
                     <span className="font-code text-sm text-[var(--poder-gold)]">
-                        {score} points
+                        {score} {t('game.points')}
                     </span>
                 </div>
                 {/* Progress bar */}
@@ -150,13 +153,13 @@ export function GameEngine({ scenario, onComplete, onExit }: GameEngineProps) {
                         {/* Speaker indicator */}
                         <div className="mb-4">
                             {currentStep.speaker === "authority" && (
-                                <span className="badge-fire">👮 Authority</span>
+                                <span className="badge-fire">👮 {t('game.authority')}</span>
                             )}
                             {currentStep.speaker === "narrator" && (
-                                <span className="badge-neon">📖 Scene</span>
+                                <span className="badge-neon">📖 {t('game.scene')}</span>
                             )}
                             {currentStep.speaker === "system" && (
-                                <span className="badge-power">⚡ Result</span>
+                                <span className="badge-power">⚡ {t('game.result')}</span>
                             )}
                         </div>
 
@@ -170,27 +173,30 @@ export function GameEngine({ scenario, onComplete, onExit }: GameEngineProps) {
                                 }`}
                         >
                             <p className="font-body text-lg text-[var(--poder-paper)] leading-relaxed">
-                                {currentStep.narrative}
+                                {localizedStep?.narrative}
                             </p>
                         </div>
 
                         {/* Choices */}
                         {currentStep.choices && !showFeedback && (
                             <div className="space-y-3">
-                                {currentStep.choices.map((choice, index) => (
-                                    <motion.button
-                                        key={choice.id}
-                                        initial={{ opacity: 0, x: -20 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        transition={{ delay: index * 0.1 }}
-                                        onClick={() => handleChoice(choice)}
-                                        className="w-full p-4 text-left bg-[var(--poder-charcoal)] border border-[var(--poder-slate)] rounded-lg hover:border-[var(--poder-fire)] transition-colors"
-                                    >
-                                        <span className="font-body text-[var(--poder-paper)]">
-                                            {choice.text}
-                                        </span>
-                                    </motion.button>
-                                ))}
+                                {currentStep.choices.map((choice, index) => {
+                                    const localizedChoice = getLocalizedChoice(choice, language);
+                                    return (
+                                        <motion.button
+                                            key={choice.id}
+                                            initial={{ opacity: 0, x: -20 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            transition={{ delay: index * 0.1 }}
+                                            onClick={() => handleChoice(choice)}
+                                            className="w-full p-4 text-left bg-[var(--poder-charcoal)] border border-[var(--poder-slate)] rounded-lg hover:border-[var(--poder-fire)] transition-colors"
+                                        >
+                                            <span className="font-body text-[var(--poder-paper)]">
+                                                {localizedChoice.text}
+                                            </span>
+                                        </motion.button>
+                                    );
+                                })}
                             </div>
                         )}
 
@@ -223,16 +229,16 @@ export function GameEngine({ scenario, onComplete, onExit }: GameEngineProps) {
                                                     }`}
                                             >
                                                 {showFeedback.pointsEarned > 0 ? "+" : ""}
-                                                {showFeedback.pointsEarned} points
+                                                {showFeedback.pointsEarned} {t('game.points')}
                                             </span>
                                         </div>
                                         <p className="font-body text-[var(--poder-paper)] opacity-90">
-                                            {showFeedback.feedback}
+                                            {getLocalizedChoice(showFeedback, language).feedback}
                                         </p>
                                     </div>
 
                                     <button onClick={advanceStep} className="btn-fire w-full">
-                                        Continue →
+                                        {t('game.continue')}
                                     </button>
                                 </motion.div>
                             )}
@@ -246,7 +252,7 @@ export function GameEngine({ scenario, onComplete, onExit }: GameEngineProps) {
                                     animate={{ rotate: 360 }}
                                     transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
                                 />
-                                <span className="font-code text-sm">Loading...</span>
+                                <span className="font-code text-sm">{t('game.loading')}</span>
                             </div>
                         )}
 
@@ -256,7 +262,7 @@ export function GameEngine({ scenario, onComplete, onExit }: GameEngineProps) {
                                 onClick={() => onComplete(score, scenario.totalPoints)}
                                 className="btn-fire w-full"
                             >
-                                Complete Scenario
+                                {t('game.completeScenario')}
                             </button>
                         )}
                     </motion.div>
@@ -282,15 +288,18 @@ export function ScenarioComplete({
     onReplay,
     onExit,
 }: ScenarioCompleteProps) {
+    const { language, t } = useLanguage();
     const percentage = Math.round((score / maxScore) * 100);
+    const localizedScenario = getLocalizedScenario(scenario, language);
+
     const grade =
         percentage >= 80
-            ? { label: "Rights Champion", emoji: "🏆", color: "var(--poder-gold)" }
+            ? { labelKey: "grade.rightsChampion", emoji: "🏆", color: "var(--poder-gold)" }
             : percentage >= 60
-                ? { label: "Rights Aware", emoji: "✊", color: "var(--poder-neon)" }
+                ? { labelKey: "grade.rightsAware", emoji: "✊", color: "var(--poder-neon)" }
                 : percentage >= 40
-                    ? { label: "Learning", emoji: "📚", color: "var(--poder-paper)" }
-                    : { label: "Needs Practice", emoji: "⚠️", color: "var(--poder-fire)" };
+                    ? { labelKey: "grade.learning", emoji: "📚", color: "var(--poder-paper)" }
+                    : { labelKey: "grade.needsPractice", emoji: "⚠️", color: "var(--poder-fire)" };
 
     return (
         <div className="min-h-screen bg-[var(--poder-midnight)] flex items-center justify-center p-4">
@@ -304,10 +313,10 @@ export function ScenarioComplete({
                     className="font-display text-4xl mb-2"
                     style={{ color: grade.color }}
                 >
-                    {grade.label}
+                    {t(grade.labelKey)}
                 </h2>
                 <p className="font-body text-[var(--poder-paper)] opacity-70 mb-6">
-                    {scenario.title} Complete
+                    {localizedScenario.title} {t('game.complete')}
                 </p>
 
                 <div className="bg-[var(--poder-charcoal)] rounded-xl p-6 mb-6">
@@ -316,7 +325,7 @@ export function ScenarioComplete({
                             {score}
                         </span>
                         <span className="font-code text-[var(--poder-paper)] opacity-50">
-                            / {maxScore} pts
+                            / {maxScore} {t('play.pts')}
                         </span>
                     </div>
                     <div className="h-3 bg-[var(--poder-slate)] rounded-full overflow-hidden">
@@ -331,10 +340,10 @@ export function ScenarioComplete({
 
                 <div className="flex flex-col gap-3">
                     <button onClick={onReplay} className="btn-neon">
-                        Try Again
+                        {t('game.tryAgain')}
                     </button>
                     <button onClick={onExit} className="btn-fire">
-                        Back to Scenarios
+                        {t('game.backToScenarios')}
                     </button>
                 </div>
             </motion.div>

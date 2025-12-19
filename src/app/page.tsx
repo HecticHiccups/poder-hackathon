@@ -2,23 +2,7 @@
 
 import { motion, Variants } from "framer-motion";
 import Link from "next/link";
-import { useEffect, useState } from "react";
-
-// Check for reduced motion preference
-function useReducedMotion() {
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    setPrefersReducedMotion(mediaQuery.matches);
-
-    const handler = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches);
-    mediaQuery.addEventListener('change', handler);
-    return () => mediaQuery.removeEventListener('change', handler);
-  }, []);
-
-  return prefersReducedMotion;
-}
+import { useLanguage } from "@/context/LanguageContext";
 
 // Animation variants - optimized for mobile
 const container: Variants = {
@@ -26,32 +10,32 @@ const container: Variants = {
   show: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.08,  // Faster cascade (was 0.15)
-      delayChildren: 0.1,     // Quicker start (was 0.3)
+      staggerChildren: 0.08,
+      delayChildren: 0.1,
     },
   },
 };
 
 const item: Variants = {
-  hidden: { opacity: 0, y: 20 },  // Reduced movement (was y: 30)
+  hidden: { opacity: 0, y: 20 },
   show: {
     opacity: 1,
     y: 0,
     transition: {
       type: "spring",
-      damping: 25,      // Slightly stiffer (was 20)
-      stiffness: 120,   // Snappier (was 100)
+      damping: 25,
+      stiffness: 120,
     },
   },
 };
 
-// Simplified glow effect - uses opacity instead of expensive textShadow
+// Simplified glow effect
 const fireGlow = {
   initial: { opacity: 0.85 },
   animate: {
     opacity: [0.85, 1, 0.85],
     transition: {
-      duration: 2.5,     // Slightly slower for smoother feel
+      duration: 2.5,
       repeat: Infinity,
       ease: "easeInOut" as const,
     },
@@ -59,6 +43,30 @@ const fireGlow = {
 };
 
 export default function Home() {
+  const { t, language } = useLanguage();
+
+  // Feature cards with translation keys
+  const features = [
+    {
+      icon: "📜",
+      titleKey: "feature.archive.title",
+      descKey: "feature.archive.desc",
+      color: "var(--poder-fire)",
+    },
+    {
+      icon: "🎮",
+      titleKey: "feature.play.title",
+      descKey: "feature.play.desc",
+      color: "var(--poder-neon)",
+    },
+    {
+      icon: "🌍",
+      titleKey: "feature.translate.title",
+      descKey: "feature.translate.desc",
+      color: "var(--poder-gold)",
+    },
+  ];
+
   return (
     <main className="relative min-h-screen overflow-hidden">
       {/* Background Layers */}
@@ -90,7 +98,7 @@ export default function Home() {
         <motion.div variants={item}>
           <span className="badge-neon mb-6">
             <span className="inline-block w-2 h-2 rounded-full bg-[var(--poder-neon)] animate-pulse mr-2" />
-            Powered by the People
+            {t('hero.badge')}
           </span>
         </motion.div>
 
@@ -111,11 +119,10 @@ export default function Home() {
 
         {/* Tagline */}
         <motion.p
-          className="font-body text-xl sm:text-2xl text-[var(--poder-paper)] opacity-80 text-center max-w-xl mt-4 leading-relaxed"
+          className="font-body text-xl sm:text-2xl text-[var(--poder-paper)] opacity-80 text-center max-w-xl mt-4 leading-relaxed whitespace-pre-line"
           variants={item}
         >
-          Reclaiming rights.<br />
-          Empowering people.
+          {t('hero.tagline')}
         </motion.p>
 
         {/* CTA Buttons */}
@@ -124,10 +131,10 @@ export default function Home() {
           variants={item}
         >
           <Link href="/learn" className="btn-fire flex-1 text-center">
-            Start Learning
+            {t('hero.cta.learn')}
           </Link>
           <Link href="/play" className="btn-neon flex-1 text-center">
-            Enter Simulation
+            {t('hero.cta.play')}
           </Link>
         </motion.div>
 
@@ -138,19 +145,24 @@ export default function Home() {
         >
           <div className="text-center">
             <p className="font-display text-4xl text-[var(--poder-gold)]">1,247</p>
-            <p className="font-code text-xs text-[var(--poder-paper)] opacity-60 uppercase tracking-wider">Rights Archived</p>
+            <p className="font-code text-xs text-[var(--poder-paper)] opacity-60 uppercase tracking-wider">
+              {t('stats.rightsArchived')}
+            </p>
           </div>
           <div className="text-center">
             <p className="font-display text-4xl text-[var(--poder-neon)]">12</p>
-            <p className="font-code text-xs text-[var(--poder-paper)] opacity-60 uppercase tracking-wider">Languages</p>
+            <p className="font-code text-xs text-[var(--poder-paper)] opacity-60 uppercase tracking-wider">
+              {t('stats.languages')}
+            </p>
           </div>
           <div className="text-center">
             <p className="font-display text-4xl text-[var(--poder-fire)]">
-              {/* Emoji on mobile for compatibility, text on desktop */}
               <span className="sm:hidden">♾️</span>
               <span className="hidden sm:inline">∞</span>
             </p>
-            <p className="font-code text-xs text-[var(--poder-paper)] opacity-60 uppercase tracking-wider">Power to You</p>
+            <p className="font-code text-xs text-[var(--poder-paper)] opacity-60 uppercase tracking-wider">
+              {t('stats.power')}
+            </p>
           </div>
         </motion.div>
 
@@ -163,7 +175,9 @@ export default function Home() {
             href="#about"
             className="flex flex-col items-center text-[var(--poder-paper)] opacity-50 hover:opacity-100 transition-opacity"
           >
-            <span className="font-code text-xs uppercase tracking-widest mb-2">Scroll to Learn More</span>
+            <span className="font-code text-xs uppercase tracking-widest mb-2">
+              {t('scroll.prompt')}
+            </span>
             <motion.svg
               width="24"
               height="24"
@@ -190,39 +204,24 @@ export default function Home() {
           transition={{ duration: 0.6 }}
         >
           <h2 className="font-display text-5xl sm:text-6xl text-[var(--poder-paper)] mb-8">
-            Know Your <span className="text-[var(--poder-fire)]">Rights</span>
+            {t('about.title')} <span className="text-[var(--poder-fire)]">{t('about.titleHighlight')}</span>
           </h2>
 
-          <p className="font-body text-lg text-[var(--poder-paper)] opacity-80 mb-12 leading-relaxed">
-            Information is power. But critical rights information has been removed, hidden, or buried
-            in government websites. <strong className="text-[var(--poder-neon)]">Poder</strong> recovers this knowledge
-            and transforms it into interactive, gamified learning experiences — in whatever language you speak.
-          </p>
+          <p
+            className="font-body text-lg text-[var(--poder-paper)] opacity-80 mb-12 leading-relaxed"
+            dangerouslySetInnerHTML={{
+              __html: t('about.description').replace(
+                '<strong>Poder</strong>',
+                '<strong class="text-[var(--poder-neon)]">Poder</strong>'
+              )
+            }}
+          />
 
           {/* Feature Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[
-              {
-                icon: "📜",
-                title: "Archive",
-                desc: "Recovered government documents simplified for everyone.",
-                color: "var(--poder-fire)",
-              },
-              {
-                icon: "🎮",
-                title: "Play",
-                desc: "Real-life scenarios to practice asserting your rights.",
-                color: "var(--poder-neon)",
-              },
-              {
-                icon: "🌍",
-                title: "Translate",
-                desc: "Instant translation to your native language.",
-                color: "var(--poder-gold)",
-              },
-            ].map((feature, i) => (
+            {features.map((feature, i) => (
               <motion.div
-                key={feature.title}
+                key={feature.titleKey}
                 className="card-resistance"
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -234,10 +233,10 @@ export default function Home() {
                   className="font-display text-2xl mb-2"
                   style={{ color: feature.color }}
                 >
-                  {feature.title}
+                  {t(feature.titleKey)}
                 </h3>
                 <p className="font-body text-[var(--poder-paper)] opacity-70">
-                  {feature.desc}
+                  {t(feature.descKey)}
                 </p>
               </motion.div>
             ))}
@@ -255,17 +254,16 @@ export default function Home() {
             transition={{ duration: 0.5 }}
           >
             <span className="badge-power mb-6 inline-block">
-              ☕ Buy Us a Matcha
+              ☕ {t('cta.badge')}
             </span>
             <h2 className="font-display text-4xl sm:text-5xl text-[var(--poder-paper)] mb-6">
-              Fueled by <span className="text-[var(--poder-gold)]">Performative People</span>
+              {t('cta.title')} <span className="text-[var(--poder-gold)]">{t('cta.titleHighlight')}</span>
             </h2>
             <p className="font-body text-lg text-[var(--poder-paper)] opacity-70 mb-8">
-              This project is built by people who believe knowledge should be free.
-              Support us by sharing, contributing, or buying us a matcha.
+              {t('cta.description')}
             </p>
             <button className="btn-fire animate-pulse-fire">
-              Support the Movement
+              {t('cta.button')}
             </button>
           </motion.div>
         </div>
@@ -275,14 +273,14 @@ export default function Home() {
       <footer className="relative z-10 px-6 py-8 bg-[var(--poder-charcoal)] border-t border-[var(--poder-slate)]">
         <div className="max-w-4xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="font-code text-sm text-[var(--poder-paper)] opacity-50">
-            © 2024 Poder. Reclaiming Power.
+            {t('footer.copyright')}
           </p>
           <div className="flex gap-6">
             <a href="#" className="font-code text-sm text-[var(--poder-paper)] opacity-50 hover:opacity-100 transition-opacity">
-              GitHub
+              {t('footer.github')}
             </a>
             <a href="#" className="font-code text-sm text-[var(--poder-paper)] opacity-50 hover:opacity-100 transition-opacity">
-              Discord
+              {t('footer.discord')}
             </a>
           </div>
         </div>

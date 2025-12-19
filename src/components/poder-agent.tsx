@@ -3,7 +3,8 @@
 import { useState, useEffect, useRef, useCallback, memo } from 'react';
 import { motion, AnimatePresence, useDragControls } from 'framer-motion';
 import { usePathname } from 'next/navigation';
-import { findAnswer, searchQuestions, type PoderAnswer, type Language } from '@/lib/poder-agent';
+import { findAnswer, searchQuestions, analyzeIntent, type PoderAnswer, type Language } from '@/lib/poder-agent';
+import { useLanguage } from '@/context/LanguageContext';
 
 // Types for Web Speech API
 interface IWindow extends Window {
@@ -109,15 +110,20 @@ SuggestionsList.displayName = 'SuggestionsList';
 
 export function PoderAgent() {
     const pathname = usePathname();
+    const { language, toggleLanguage } = useLanguage();
     const [isOpen, setIsOpen] = useState(false);
     const [isListening, setIsListening] = useState(false);
-    const [language, setLanguage] = useState<Language>('en');
     const [transcript, setTranscript] = useState('');
     const [response, setResponse] = useState<PoderAnswer | null>(null);
     const [isPlaying, setIsPlaying] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [suggestions, setSuggestions] = useState<PoderAnswer[]>([]);
     const [hasMicPermission, setHasMicPermission] = useState<boolean | null>(null);
+
+    // New: Agent-specific state
+    const [isAgentThinking, setIsAgentThinking] = useState(false);
+    const [conversationSessionId, setConversationSessionId] = useState<string | null>(null);
+    const [responseSource, setResponseSource] = useState<'faq' | 'agent' | null>(null);
 
     // Refs
     const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -186,6 +192,9 @@ export function PoderAgent() {
         setResponse(null);
         setError(null);
         setSuggestions(searchQuestions('', language, 5));
+        // Clear conversation session when language changes
+        setConversationSessionId(null);
+        setResponseSource(null);
     }, [language]);
 
     const playAnswer = useCallback((url: string) => {
@@ -202,21 +211,141 @@ export function PoderAgent() {
         }
     }, []);
 
-    const handleQuestion = useCallback((text: string) => {
-        // Use current language ref or state
-        const answer = findAnswer(text, language);
+    const handleQuestion = useCallback(async (text: string) => {
+        setIsAgentThinking(true);
+        setError(null);
+        setResponse(null);
 
-        if (answer) {
-            setResponse(answer);
-            setError(null);
-            playAnswer(answer.audioUrl);
-        } else {
-            setError(
-                language === 'en'
-                    ? "I couldn't find an answer. Try one of the questions below."
-                    : "No encontré una respuesta. Prueba una de las preguntas abajo."
-            );
-            setResponse(null);
+        // Analyze user intent for smart routing
+        const intent = analyzeIntent(text, language);
+        console.log('[Poder Agent] Intent detected:', intent);
+
+        // Route based on intent
+        if (intent === 'greeting' || intent === 'help_request' || intent === 'conversation') {
+            // Conversational intents → go straight to dynamic Q&A (natural conversation)
+            console.log('[Poder Agent] Conversational intent, using dynamic Q&A (Groq + TTS)');
+
+            try {
+                const apiResponse = await fetch('/api/conversation/dynamic', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        text,
+                        language,
+                    }),
+                });
+
+                const data = await apiResponse.json();
+
+                if (!apiResponse.ok) {
+                    throw new Error(data.error || 'API request failed');
+                }
+
+                if (data.type === 'dynamic') {
+                    const dynamicAnswer: PoderAnswer = {
+                        id: `dynamic-${Date.now()}`,
+                        question: text,
+                        answer: data.text,
+                        voiceScript: data.text,
+                        audioUrl: data.audioUrl,
+                        relatedScenarios: [],
+                        relatedCards: [],
+                        category: 'dynamic-response',
+                        confidence: 1,
+                    };
+
+                    setResponse(dynamicAnswer);
+                    setResponseSource('agent');
+                    playAnswer(data.audioUrl);
+
+                    console.log('[Poder Agent] Dynamic response played, time:', data.duration_ms, 'ms');
+                } else if (data.type === 'error') {
+                    throw new Error(data.message);
+                }
+            } catch (error) {
+                console.error('[Poder Agent] Dynamic Q&A error:', error);
+                setError(
+                    language === 'en'
+                        ? "I couldn't process that. Please try again."
+                        : "No pude procesar eso. Por favor intenta de nuevo."
+                );
+            } finally {
+                setIsAgentThinking(false);
+            }
+            return;
+        }
+
+        // Legal question → try FAQ first (Layer 2 - fast, free)
+        const faqAnswer = findAnswer(text, language);
+
+        if (faqAnswer && faqAnswer.confidence >= 0.7) {
+            // High confidence FAQ match → use existing MP3
+            console.log('[Poder Agent] Using FAQ MP3:', faqAnswer.id);
+            setResponse(faqAnswer);
+            setResponseSource('faq');
+            playAnswer(faqAnswer.audioUrl);
+            setIsAgentThinking(false);
+            return;
+        }
+
+        // No FAQ match or low confidence → use dynamic Q&A (Layer 2.5)
+        try {
+            console.log('[Poder Agent] No FAQ match, using dynamic Q&A (Groq + TTS)');
+
+            const apiResponse = await fetch('/api/conversation/dynamic', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    text,
+                    language,
+                }),
+            });
+
+            const data = await apiResponse.json();
+
+            if (!apiResponse.ok) {
+                throw new Error(data.error || 'API request failed');
+            }
+
+            if (data.type === 'dynamic') {
+                const dynamicAnswer: PoderAnswer = {
+                    id: `dynamic-${Date.now()}`,
+                    question: text,
+                    answer: data.text,
+                    voiceScript: data.text,
+                    audioUrl: data.audioUrl,
+                    relatedScenarios: [],
+                    relatedCards: [],
+                    category: 'dynamic-response',
+                    confidence: 1,
+                };
+
+                setResponse(dynamicAnswer);
+                setResponseSource('agent');
+                playAnswer(data.audioUrl);
+
+                console.log('[Poder Agent] Dynamic response played, time:', data.duration_ms, 'ms');
+            } else if (data.type === 'error') {
+                throw new Error(data.message);
+            }
+        } catch (error) {
+            console.error('[Poder Agent] Dynamic Q&A error:', error);
+
+            // Fallback to low-confidence FAQ match if available
+            if (faqAnswer) {
+                console.log('[Poder Agent] Falling back to low-confidence FAQ:', faqAnswer.id);
+                setResponse(faqAnswer);
+                setResponseSource('faq');
+                playAnswer(faqAnswer.audioUrl);
+            } else {
+                setError(
+                    language === 'en'
+                        ? "I couldn't find an answer. Try one of the questions below."
+                        : "No encontré una respuesta. Prueba una de las preguntas abajo."
+                );
+            }
+        } finally {
+            setIsAgentThinking(false);
         }
     }, [language, playAnswer]);
 
@@ -277,9 +406,11 @@ export function PoderAgent() {
     // Derived status text
     const statusText = isListening
         ? (language === 'en' ? 'Listening...' : 'Escuchando...')
-        : isPlaying
-            ? (language === 'en' ? 'Speaking...' : 'Hablando...')
-            : (language === 'en' ? 'Tap mic to ask' : 'Toca el micrófono');
+        : isAgentThinking
+            ? (language === 'en' ? 'Thinking...' : 'Pensando...')
+            : isPlaying
+                ? (language === 'en' ? 'Speaking...' : 'Hablando...')
+                : (language === 'en' ? 'Tap mic to ask' : 'Toca el micrófono');
 
     if (pathname?.includes('/play/scenario')) return null;
 
@@ -350,7 +481,7 @@ export function PoderAgent() {
                             <ModalHeader
                                 onClose={() => setIsOpen(false)}
                                 language={language}
-                                onToggleLanguage={() => setLanguage(l => l === 'en' ? 'es' : 'en')}
+                                onToggleLanguage={toggleLanguage}
                                 status={statusText}
                             />
 

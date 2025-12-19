@@ -78,6 +78,49 @@ export function findAnswer(
 }
 
 /**
+ * Intent types for routing user input
+ */
+export type UserIntent = 'greeting' | 'help_request' | 'legal_question' | 'conversation';
+
+/**
+ * Analyze user input to determine intent
+ * Used for smart routing between FAQ and dynamic Q&A
+ */
+export function analyzeIntent(text: string, language: Language = 'en'): UserIntent {
+    const normalized = text.toLowerCase().trim();
+
+    // Greeting patterns (short, no legal keywords)
+    const greetingPatterns = language === 'en'
+        ? /^(hi|hello|hey|good morning|good afternoon|good evening|greetings)[\s!.?]*$/i
+        : /^(hola|buenas|buenos días|buenas tardes|buenas noches|qué tal|hey|saludos)[\s!.?]*$/i;
+
+    if (greetingPatterns.test(normalized)) {
+        return 'greeting';
+    }
+
+    // Help request patterns
+    const helpPatterns = language === 'en'
+        ? /^(help|what can you|how does this|what do you do|can you help|i need help|ayuda)/i
+        : /^(ayuda|qué puedes|cómo funciona|para qué sirves|ayúdame|necesito ayuda|puedes ayudar)/i;
+
+    if (helpPatterns.test(normalized)) {
+        return 'help_request';
+    }
+
+    // Legal keywords indicate a legal question
+    const legalKeywords = language === 'en'
+        ? /\b(ice|police|cop|officer|rights|lawyer|attorney|arrest|detained|search|warrant|raid|deportation|immigration|workplace|door|stop|pulled over)\b/i
+        : /\b(ice|migra|policía|oficial|derechos|abogado|arresto|detenido|registro|orden|redada|deportación|inmigración|trabajo|puerta|parada|parado)\b/i;
+
+    if (legalKeywords.test(normalized)) {
+        return 'legal_question';
+    }
+
+    // Default to conversation for anything else
+    return 'conversation';
+}
+
+/**
  * Get all available categories in the knowledge base
  */
 export function getCategories(language: Language = 'en'): string[] {
