@@ -303,6 +303,13 @@ export function PoderAgent() {
                     }),
                 });
 
+                // Check for non-JSON responses (404 pages, etc.)
+                const contentType = apiResponse.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    console.error('[Poder Agent] API returned non-JSON:', apiResponse.status, contentType);
+                    throw new Error('API_NOT_AVAILABLE');
+                }
+
                 const data = await apiResponse.json();
                 console.log('[Poder Agent] API response:', data);
 
@@ -394,6 +401,13 @@ export function PoderAgent() {
                     language,
                 }),
             });
+
+            // Check for non-JSON responses (404 pages, etc.)
+            const contentType = apiResponse.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                console.error('[Poder Agent] API returned non-JSON:', apiResponse.status, contentType);
+                throw new Error('API_NOT_AVAILABLE');
+            }
 
             const data = await apiResponse.json();
 

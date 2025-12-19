@@ -134,6 +134,31 @@ audio.addEventListener('error', (e) => console.log('error', e.target.error));
 **Cause:** API keys not set in Vercel environment
 **Solution:** Add env vars OR use fallback text response (implemented)
 
+### Issue: "Unexpected token '<', <!DOCTYPE..." JSON parse error
+**Cause:** API endpoint returning HTML (404 page) instead of JSON. Happens when:
+1. Testing locally without dev server running (Node.js version issue)
+2. API route doesn't exist or path is wrong
+3. Vercel deployment hasn't completed
+
+**Solution:** Added content-type checking before JSON parsing:
+```javascript
+const contentType = apiResponse.headers.get('content-type');
+if (!contentType || !contentType.includes('application/json')) {
+    throw new Error('API_NOT_AVAILABLE');
+}
+```
+
+**Debug:** Test API directly:
+```bash
+# GET (health check)
+curl https://poder-hackathon.vercel.app/api/conversation/dynamic
+
+# POST (actual request)
+curl -X POST https://poder-hackathon.vercel.app/api/conversation/dynamic \
+  -H "Content-Type: application/json" \
+  -d '{"text":"hello","language":"en"}'
+```
+
 ---
 
 ## Translation System
