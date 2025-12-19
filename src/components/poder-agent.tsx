@@ -131,6 +131,7 @@ export function PoderAgent() {
     const recognitionRef = useRef<any>(null);
     const dragControls = useDragControls();
     const fabConstraintsRef = useRef<HTMLDivElement | null>(null);
+    const audioUnlockedRef = useRef(false);
 
     // Initial permission check - only set false if explicitly denied
     useEffect(() => {
@@ -208,41 +209,71 @@ export function PoderAgent() {
         setResponseSource(null);
     }, [language]);
 
+    // Unlock audio on iOS/Safari - must be called from user gesture
+    const unlockAudio = useCallback(() => {
+        if (audioUnlockedRef.current) return;
+
+        const audio = audioRef.current;
+        if (audio) {
+            console.log('[Audio] Unlocking audio context...');
+            // Create a short silence and play it to unlock
+            audio.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';
+            audio.play().then(() => {
+                audio.pause();
+                audio.currentTime = 0;
+                audioUnlockedRef.current = true;
+                console.log('[Audio] Audio context unlocked!');
+            }).catch(e => {
+                console.log('[Audio] Could not unlock audio:', e.message);
+            });
+        }
+    }, []);
+
     const playAnswer = useCallback((url: string) => {
         if (!url) {
             console.warn('[Audio] No URL provided');
             return;
         }
 
-        if (audioRef.current) {
+        const audio = audioRef.current;
+        if (audio) {
             console.log('[Audio] Attempting to play:', url);
-            audioRef.current.pause();
-            audioRef.current.currentTime = 0;
-            audioRef.current.src = url;
 
-            // For mobile: ensure audio is loaded before playing
-            audioRef.current.load();
+            // Stop any current playback
+            audio.pause();
+            audio.currentTime = 0;
 
-            const playPromise = audioRef.current.play();
-            if (playPromise !== undefined) {
-                playPromise
-                    .then(() => {
-                        console.log('[Audio] Playback started successfully');
-                        setIsPlaying(true);
-                    })
-                    .catch(e => {
-                        console.error('[Audio] Playback error:', e.name, e.message);
-                        setIsPlaying(false);
-                        // Show user-friendly error for autoplay issues
-                        if (e.name === 'NotAllowedError') {
-                            setError(
-                                language === 'en'
-                                    ? 'Tap the play button to hear the response.'
-                                    : 'Toca el botón de reproducir para escuchar la respuesta.'
-                            );
-                        }
-                    });
-            }
+            // Set source and load
+            audio.src = url;
+            console.log('[Audio] Source set, loading...');
+
+            // Use oncanplaythrough for more reliable playback
+            const handleCanPlay = () => {
+                console.log('[Audio] Can play through, starting playback...');
+                const playPromise = audio.play();
+                if (playPromise !== undefined) {
+                    playPromise
+                        .then(() => {
+                            console.log('[Audio] Playback started successfully');
+                            setIsPlaying(true);
+                        })
+                        .catch(e => {
+                            console.error('[Audio] Playback error:', e.name, e.message);
+                            setIsPlaying(false);
+                            if (e.name === 'NotAllowedError') {
+                                setError(
+                                    language === 'en'
+                                        ? 'Tap a question again to hear audio.'
+                                        : 'Toca una pregunta de nuevo para escuchar.'
+                                );
+                            }
+                        });
+                }
+                audio.removeEventListener('canplaythrough', handleCanPlay);
+            };
+
+            audio.addEventListener('canplaythrough', handleCanPlay);
+            audio.load();
         } else {
             console.error('[Audio] Audio element not found');
         }
@@ -526,6 +557,7 @@ export function PoderAgent() {
                 onClick={() => {
                     // Only open if not dragging
                     if (!isDragging) {
+                        unlockAudio(); // Unlock audio on iOS/Safari
                         setIsOpen(true);
                     }
                 }}

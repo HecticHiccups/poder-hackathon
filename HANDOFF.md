@@ -107,8 +107,24 @@ Layer 2 (pre-recorded FAQ) works without any API keys.
 **Solution:** Changed from `bottom-4` to `bottom-20` for mobile
 
 ### Issue: Audio doesn't play on mobile
-**Cause:** Mobile browsers block autoplay; need `load()` before `play()`
-**Solution:** Added `audio.load()`, `playsInline`, `preload="auto"` attributes
+**Cause:** iOS Safari and mobile browsers block autoplay even for user-initiated actions if audio context isn't "unlocked"
+**Solution:** Multiple fixes applied:
+1. Added `audio.load()` before `play()`
+2. Added `playsInline` attribute for iOS
+3. Changed `preload` to `"auto"`
+4. Removed `crossOrigin` attribute (was causing potential CORS issues)
+5. Added audio "unlock" pattern - play silent audio on first user gesture
+6. Use `canplaythrough` event instead of immediate `play()` call
+
+**Debug pattern for audio issues:**
+```javascript
+// Add these event listeners to trace audio flow:
+audio.addEventListener('loadstart', () => console.log('loadstart'));
+audio.addEventListener('canplay', () => console.log('canplay'));
+audio.addEventListener('canplaythrough', () => console.log('canplaythrough'));
+audio.addEventListener('playing', () => console.log('playing'));
+audio.addEventListener('error', (e) => console.log('error', e.target.error));
+```
 
 ### Issue: Language toggle too large on mobile
 **Cause:** Fixed size didn't adapt to mobile
@@ -222,10 +238,45 @@ Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
 
 ---
 
+## Mobile Audio Playback (Critical)
+
+iOS Safari and some Android browsers have strict autoplay policies. Even "user-initiated" audio can fail if the browser's audio context isn't "unlocked".
+
+**The Unlock Pattern:**
+```javascript
+// Call this on first user interaction (e.g., when modal opens)
+const unlockAudio = () => {
+  const audio = document.querySelector('audio');
+  // Play a tiny silent WAV file
+  audio.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';
+  audio.play().then(() => {
+    audio.pause();
+    console.log('Audio unlocked!');
+  });
+};
+```
+
+**Console log sequence for successful playback:**
+```
+[Audio] Unlocking audio context...
+[Audio] Audio context unlocked!
+[Audio] Attempting to play: /audio/en/ice_door_001.mp3
+[Audio] Source set, loading...
+[Audio Event] loadstart
+[Audio Event] canplay - ready to play
+[Audio] Can play through, starting playback...
+[Audio Event] playing
+[Audio] Playback started successfully
+```
+
+If you see `[Audio Event] error` or `NotAllowedError`, the audio context isn't unlocked.
+
+---
+
 ## Known Limitations
 
 1. **Speech Recognition:** Uses Web Speech API (Chrome/Safari only, not Firefox)
-2. **iOS Safari:** Requires user gesture before audio playback
+2. **iOS Safari:** Requires audio unlock pattern on first user gesture
 3. **Dynamic Voice:** Requires paid ElevenLabs credits after free tier
 4. **Offline:** Only Layer 2 (pre-recorded FAQ) works offline
 
