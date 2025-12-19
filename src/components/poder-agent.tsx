@@ -207,18 +207,44 @@ export function PoderAgent() {
     }, [language]);
 
     const playAnswer = useCallback((url: string) => {
+        if (!url) {
+            console.warn('[Audio] No URL provided');
+            return;
+        }
+
         if (audioRef.current) {
+            console.log('[Audio] Attempting to play:', url);
             audioRef.current.pause();
             audioRef.current.currentTime = 0;
             audioRef.current.src = url;
-            audioRef.current.play()
-                .then(() => setIsPlaying(true))
-                .catch(e => {
-                    console.error("Audio playback error:", e);
-                    setIsPlaying(false);
-                });
+
+            // For mobile: ensure audio is loaded before playing
+            audioRef.current.load();
+
+            const playPromise = audioRef.current.play();
+            if (playPromise !== undefined) {
+                playPromise
+                    .then(() => {
+                        console.log('[Audio] Playback started successfully');
+                        setIsPlaying(true);
+                    })
+                    .catch(e => {
+                        console.error('[Audio] Playback error:', e.name, e.message);
+                        setIsPlaying(false);
+                        // Show user-friendly error for autoplay issues
+                        if (e.name === 'NotAllowedError') {
+                            setError(
+                                language === 'en'
+                                    ? 'Tap the play button to hear the response.'
+                                    : 'Toca el botón de reproducir para escuchar la respuesta.'
+                            );
+                        }
+                    });
+            }
+        } else {
+            console.error('[Audio] Audio element not found');
         }
-    }, []);
+    }, [language]);
 
     const handleQuestion = useCallback(async (text: string) => {
         setIsAgentThinking(true);
@@ -451,7 +477,13 @@ export function PoderAgent() {
 
     return (
         <>
-            <audio ref={audioRef} className="hidden" preload="none" />
+            <audio
+                ref={audioRef}
+                className="hidden"
+                preload="auto"
+                playsInline
+                crossOrigin="anonymous"
+            />
 
             {/* Drag boundary - full viewport */}
             <div ref={fabConstraintsRef} className="fixed inset-0 pointer-events-none z-40" />
